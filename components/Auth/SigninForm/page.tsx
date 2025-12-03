@@ -1,11 +1,12 @@
 'use client';
 import { EmailIcon, PasswordIcon } from '@/assets/icons';
 import Link from 'next/link';
-import InputGroup from '../FormElements/InputGroup';
-import { Checkbox } from '../FormElements/checkbox';
+import InputGroup from '../../FormElements/InputGroup';
+import { Checkbox } from '../../FormElements/checkbox';
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiPost, TokenResponse } from '@/lib/api';
+import toast from 'react-hot-toast';
 
 export default function SigninWithPassword() {
   const router = useRouter();
@@ -53,14 +54,15 @@ export default function SigninWithPassword() {
       const data = await apiPost<TokenResponse>('/api/token/', form);
       localStorage.setItem('access', data.access);
       localStorage.setItem('refresh', data.refresh);
-
-      router.push('profile');
+      toast.success('Signin account successfully.');
+      router.push('/dashboard');
     } catch (err: any) {
-      setError(err.message);
+      const msg = setError(err.message);
+      toast.error(`failed:${msg}`);
     }
   }
   useEffect(() => {
-    if (localStorage.getItem('access')) router.replace('/profile');
+    if (localStorage.getItem('access')) router.replace('/dashboard');
   }, [router]);
 
   return (
@@ -92,7 +94,7 @@ export default function SigninWithPassword() {
           label='Remember me'
           name='remember'
           withIcon='check'
-          minimal
+          withBg
           radius='md'
           // onChange={(e) =>
           //   setData({

@@ -1,7 +1,7 @@
 'use client';
 
 import { EmailIcon, PasswordIcon, UserIcon } from '@/assets/icons';
-import InputGroup from '../FormElements/InputGroup';
+import InputGroup from '../../FormElements/InputGroup';
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { apiPost, User } from '@/lib/api';
@@ -46,7 +46,7 @@ export default function SigninWithPassword() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && localStorage.getItem('access')) {
-      router.replace('/profile');
+      router.replace('auth/profile');
     }
   }, [router]);
 
