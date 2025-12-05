@@ -12,44 +12,40 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { LogOutIcon, SettingsIcon, UserIcon } from './icons';
 import { useRouter } from 'next/navigation';
-import { apiGet, User } from '@/lib/api';
+import { useAuth, type User } from '@/hooks/useAuthToken';
+
+function UserInfoSkeleton() {
+  return (
+    <div className='flex items-center justify-end gap-3'>
+      <div className='hidden items-end max-[1024px]:sr-only lg:flex flex-col gap-2'>
+        <div className='h-3 w-24 rounded bg-slate-200 dark:bg-slate-600 animate-pulse' />
+        <div className='h-3 w-20 rounded bg-slate-300 dark:bg-slate-700 animate-pulse' />
+      </div>
+      <div className='h-12 w-12 rounded-full bg-slate-300 dark:bg-slate-700 animate-pulse' />
+    </div>
+  );
+}
 
 export function UserInfo() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState('');
+  const { user, loading: authLoading } = useAuth();
 
   const USER = {
     name: 'John Smith',
     email: 'johnson@nextadmin.com',
     img: '/images/user/user-03.png',
   };
+  // If no token → redirect to login
   useEffect(() => {
-    const token = localStorage.getItem('access');
-
-    if (!token) {
-      router.replace('/auth/signin');
-      return;
+    if (!authLoading && !user) {
+      router.push('/auth/sigin');
     }
-    console.log('Access token:', token);
+  }, [authLoading, user, router]);
 
-    // 👉 Now TypeScript knows this is a real string
-    const safeToken: string = token;
-
-    async function loadUser() {
-      try {
-        const data = await apiGet<User>('/api/me/', safeToken);
-        setUser(data);
-      } catch {
-        setError('Session expired. Please log in again.');
-        localStorage.clear();
-        router.replace('/auth/signin');
-      }
-    }
-
-    loadUser();
-  }, [router]);
+  if (authLoading || !user) {
+    return <UserInfoSkeleton />;
+  }
 
   return (
     <Dropdown isOpen={isOpen} setIsOpen={setIsOpen}>
@@ -57,26 +53,32 @@ export function UserInfo() {
         <span className='sr-only'>My Account</span>
 
         <figure className='flex items-center gap-3'>
-          <Image
-            src={USER.img}
-            className='size-12'
-            alt={`Avatar of ${user?.username}`}
-            role='presentation'
-            width={200}
-            height={200}
-          />
-          <figcaption className='flex items-center gap-1 font-medium text-dark dark:text-dark-6 max-[1024px]:sr-only'>
-            {/* <span>{USER.name}</span> */}
-
-            {/* <ChevronUpIcon
-              aria-hidden
-              className={cn(
-                "rotate-180 transition-transform",
-                isOpen && "rotate-0",
-              )}
-              strokeWidth={1.5}
-            /> */}
+          {/* Text (hidden on smaller screens if you want it compact) */}
+          <figcaption className='flex flex-col items-end leading-tight max-[1024px]:hidden'>
+            <span className='text-[11px] font-medium capitalize tracking-wide text-slate-500 dark:text-slate-400'>
+              Welcome back,
+            </span>
+            <span className='text-sm font-semibold text-slate-900 dark:text-slate-50 capitalize truncate max-w-[120px]'>
+              {user?.first_name}
+            </span>
           </figcaption>
+
+          {/* Avatar */}
+          <div className='relative'>
+            <Image
+              src={USER.img}
+              className='size-12 rounded-full border border-slate-200 object-cover dark:border-slate-700'
+              alt={`Avatar of ${user?.username}`}
+              role='presentation'
+              width={200}
+              height={200}
+            />
+            {/* Online dot */}
+            <span
+              className='absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border border-white bg-emerald-400 shadow-sm dark:border-slate-900'
+              aria-hidden
+            />
+          </div>
         </figure>
       </DropdownTrigger>
 
@@ -101,7 +103,9 @@ export function UserInfo() {
               {user?.first_name} {user?.last_name}
             </div>
 
-            <div className='leading-none text-gray-6'>{user?.email}</div>
+            <div className='leading-none text-gray-6 text-sm'>
+              {user?.email}
+            </div>
           </figcaption>
         </figure>
 
@@ -134,22 +138,17 @@ export function UserInfo() {
         <hr className='border-[#E8E8E8] dark:border-dark-3' />
 
         <div className='p-2 text-base text-[#4B5563] dark:text-dark-6'>
-          <button
+          <Link
+            href={'/auth/signin'}
             className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white'
-            onClick={() => setIsOpen(false)}
+            onClick={() => {
+              setIsOpen(false);
+            }}
           >
             <LogOutIcon />
 
-            <span
-              className='text-base font-medium'
-              onClick={() => {
-                localStorage.clear();
-                router.push('/auth/signin');
-              }}
-            >
-              Log out
-            </span>
-          </button>
+            <span className='text-base font-medium'>Log out</span>
+          </Link>
         </div>
       </DropdownContent>
     </Dropdown>

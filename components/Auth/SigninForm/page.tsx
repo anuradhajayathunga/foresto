@@ -5,65 +5,57 @@ import InputGroup from '../../FormElements/InputGroup';
 import { Checkbox } from '../../FormElements/checkbox';
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiPost, TokenResponse } from '@/lib/api';
 import toast from 'react-hot-toast';
+import { useToast } from '@/hooks/useToast';
+
+const API_BASE_URL = 'http://localhost:8000';
 
 export default function SigninWithPassword() {
   const router = useRouter();
-  const [error, setError] = useState('');
-
-  const [form, setData] = useState({
-    email: process.env.NEXT_PUBLIC_DEMO_USER_MAIL || '',
-    password: process.env.NEXT_PUBLIC_DEMO_USER_PASS || '',
-    remember: false,
+  // const { success, error } = useToast();
+  const [form, setForm] = useState({
+    email: '',
+    password: '',
   });
-
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setData({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-
-  //   // You can remove this code block
-  //   setLoading(true);
-
-  //   setTimeout(() => {
-  //     setLoading(false);
-  //   }, 1000);
-  // };
-
-  // function handleChange(e: ChangeEvent<HTMLInputElement>) {
-  //   setForm({ ...form, [e.target.name]: e.target.value });
-  // }
-
-  async function handleSubmit(e: FormEvent) {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setError(null);
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-
     try {
-      const data = await apiPost<TokenResponse>('/api/token/', form);
-      localStorage.setItem('access', data.access);
-      localStorage.setItem('refresh', data.refresh);
-      toast.success('Signin account successfully.');
+      const res = await fetch(`${API_BASE_URL}/api/token/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      if (!res.ok) {
+        throw new Error('Invalid credentials');
+      }
+
+      const data = await res.json();
+      // Simple approach: store in localStorage (for demo).
+      // For production: use httpOnly cookies via Next.js API routes.
+      localStorage.setItem('access_token', data.access);
+      localStorage.setItem('refresh_token', data.refresh);
+
       router.push('/dashboard');
+      toast.success('Account Login Successfully.');
     } catch (err: any) {
-      const msg = setError(err.message);
+      const msg = setError(err.message || 'Login failed');
       toast.error(`failed:${msg}`);
+    } finally {
+      setLoading(false);
     }
-  }
-  useEffect(() => {
-    if (localStorage.getItem('access')) router.replace('/dashboard');
-  }, [router]);
+  };
 
   return (
     <form onSubmit={handleSubmit}>

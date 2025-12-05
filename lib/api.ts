@@ -1,41 +1,55 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+// lib/api.ts
+export const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
 
-export interface User {
-  id: number;
-  first_name: string;
-  last_name: string;
-  username: string;
-  email: string;
+export function getAccessToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return localStorage.getItem("access_token");
 }
 
-export interface TokenResponse {
-  access: string;
-  refresh: string;
-}
+export async function apiFetch<T>(
+  path: string,
+  options: RequestInit = {}
+): Promise<T> {
+  const token = getAccessToken();
 
-async function handleResponse<T>(res: Response): Promise<T> {
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error((data as any).detail || JSON.stringify(data));
-  return data as T;
-}
+  // Build headers as a simple object to avoid the HeadersInit union issue
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
 
-export async function apiPost<T>(path: string, body: unknown, token?: string): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    body: JSON.stringify(body),
+  // Merge any headers passed in options
+  if (options.headers) {
+    if (options.headers instanceof Headers) {
+      options.headers.forEach((value, key) => {
+        headers[key] = value;
+      });
+    } else if (Array.isArray(options.headers)) {
+      // string[][]
+      for (const [key, value] of options.headers) {
+        headers[key] = value;
+      }
+    } else {
+      // Record<string, string>
+      Object.assign(headers, options.headers as Record<string, string>);
+    }
+  }
+
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_BASE_URL}${path}`, {
+    ...options,
+    headers, // headers is compatible with HeadersInit
   });
-  return handleResponse<T>(res);
-}
 
-export async function apiGet<T>(path: string, token?: string): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    headers: {
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-  });
-  return handleResponse<T>(res);
+  if (!res.ok) {
+    const text = await res.text();
+    throw  Error(text || `Request failed with status ${res.status}`);
+  }
+
+  // Some endpoints (204) have no body; handle that gracefully if needed
+  const text = await res.text();
+  return (text ? JSON.parse(text) : {}) as T;
 }

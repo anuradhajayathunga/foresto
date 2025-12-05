@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { CameraIcon } from './_components/icons';
 import { SocialAccounts } from './_components/social-accounts';
 import { useRouter } from 'next/navigation';
-import { apiGet, User } from '@/lib/api';
+import { useAuth } from '@/hooks/useAuthToken';
 
 export default function Page() {
   const [data, setData] = useState({
@@ -16,7 +16,7 @@ export default function Page() {
   });
 
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
+  const { user, loading: authLoading } = useAuth();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true); // 🔹 NEW
 
@@ -43,34 +43,16 @@ export default function Page() {
     }
   };
 
-  useEffect(() => {
-    const token = localStorage.getItem('access');
-
-    if (!token) {
-      router.replace('/auth/signin');
-      return;
-    }
-
-    const safeToken: string = token;
-
-    async function loadUser() {
-      try {
-        const data = await apiGet<User>('/api/me/', safeToken);
-        setUser(data);
-      } catch {
-        setError('Session expired. Please log in again.');
-        localStorage.clear();
-        router.replace('/auth/signin');
-      } finally {
-        setLoading(false); // 🔹 Ensure loading stops
+  // If no token → redirect to login
+    useEffect(() => {
+      if (!authLoading && !user) {
+        router.push('/auth/sigin');
       }
-    }
-
-    loadUser();
-  }, [router]);
+    }, [authLoading, user, router]);
+  
 
   // 🔹 Modern loading skeleton
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="mx-auto w-full max-w-[970px]">
         <div className="overflow-hidden rounded-[10px] bg-white shadow-1 dark:bg-gray-dark dark:shadow-card">
