@@ -2,17 +2,23 @@
 
 import { EmailIcon, PasswordIcon, UserIcon } from '@/assets/icons';
 import InputGroup from '../../FormElements/InputGroup';
-import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useState, FormEvent, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { apiPost, User } from '@/lib/api';
 import toast from 'react-hot-toast';
+import { apiFetch } from '@/lib/api'; // 👈 use your shared API helper
+
+type RegisterForm = {
+  first_name: string;
+  last_name: string;
+  username: string;
+  email: string;
+  password: string;
+};
 
 export default function SigninWithPassword() {
   const router = useRouter();
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  const [form, setData] = useState({
+  const [form, setForm] = useState<RegisterForm>({
     first_name: '',
     last_name: '',
     username: '',
@@ -20,46 +26,38 @@ export default function SigninWithPassword() {
     password: '',
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  async function handleSubmit(e: FormEvent) {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
 
     try {
-      await apiPost<User>('/api/register/', form);
-      toast.success('Created account successfully.');
+      await apiFetch('/api/register/', {
+        method: 'POST',
+        body: JSON.stringify(form),
+      });
+
+      toast.success('Account created. You can now log in.');
       router.push('signin');
-    } catch (err: any) {
-      const msg = err.message || 'Something went wrong';
-      toast.error(`failed:${msg}`);
+    } catch (err) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : 'Something went wrong. Please try again.';
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
-  }
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && localStorage.getItem('access')) {
-      router.replace('auth/profile');
-    }
-  }, [router]);
+  };
 
   return (
     <div className='w-full'>
-      {/* Error message */}
-      {error && (
-        <div className='mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700'>
-          {error}
-        </div>
-      )}
-
-      {/* Form */}
       <form onSubmit={handleSubmit} className='space-y-4'>
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
           <InputGroup
@@ -67,7 +65,7 @@ export default function SigninWithPassword() {
             label='First Name'
             className='[&_input]:py-[11px]'
             placeholder='John'
-            name='first_name' // ✅ matches state
+            name='first_name'
             handleChange={handleChange}
             value={form.first_name}
             // icon={<UserIcon />}
@@ -77,7 +75,7 @@ export default function SigninWithPassword() {
             label='Last Name'
             className='[&_input]:py-[11px]'
             placeholder='Doe'
-            name='last_name' // ✅ matches state
+            name='last_name'
             handleChange={handleChange}
             value={form.last_name}
             // icon={<UserIcon />}
@@ -118,12 +116,11 @@ export default function SigninWithPassword() {
           // icon={<PasswordIcon />}
         />
 
-        {/* Submit */}
         <div className='mb-4.5 mt-6'>
           <button
             type='submit'
             disabled={loading}
-            className='flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary p-4 font-medium text-white transition hover:bg-opacity-90'
+            className='flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary p-4 font-medium text-white transition hover:bg-opacity-90 disabled:opacity-70'
           >
             {loading ? 'Creating account...' : 'Sign up'}
             {loading && (

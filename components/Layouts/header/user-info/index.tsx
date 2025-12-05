@@ -13,13 +13,14 @@ import { useEffect, useState } from 'react';
 import { LogOutIcon, SettingsIcon, UserIcon } from './icons';
 import { useRouter } from 'next/navigation';
 import { useAuth, type User } from '@/hooks/useAuthToken';
+import toast from 'react-hot-toast';
 
 function UserInfoSkeleton() {
   return (
     <div className='flex items-center justify-end gap-3'>
       <div className='hidden items-end max-[1024px]:sr-only lg:flex flex-col gap-2'>
-        <div className='h-3 w-24 rounded bg-slate-200 dark:bg-slate-600 animate-pulse' />
-        <div className='h-3 w-20 rounded bg-slate-300 dark:bg-slate-700 animate-pulse' />
+        <div className='h-2 w-20 rounded bg-slate-200 dark:bg-slate-600 animate-pulse' />
+        <div className='h-2 w-16 rounded bg-slate-300 dark:bg-slate-700 animate-pulse' />
       </div>
       <div className='h-12 w-12 rounded-full bg-slate-300 dark:bg-slate-700 animate-pulse' />
     </div>
@@ -36,12 +37,27 @@ export function UserInfo() {
     email: 'johnson@nextadmin.com',
     img: '/images/user/user-03.png',
   };
-  // If no token → redirect to login
+
+  // Redirect to login if not authenticated
   useEffect(() => {
     if (!authLoading && !user) {
-      router.push('/auth/sigin');
+      router.push('/auth/signin'); 
     }
   }, [authLoading, user, router]);
+
+  const handleLogout = () => {
+    // Clear tokens (or whatever you stored on login)
+    try {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+    } catch (e) {
+      console.error('Error clearing auth tokens', e);
+    }
+
+    setIsOpen(false);
+    toast.success('Logged out successfully.');
+    router.push('/auth/signin');
+  };
 
   if (authLoading || !user) {
     return <UserInfoSkeleton />;
@@ -53,7 +69,6 @@ export function UserInfo() {
         <span className='sr-only'>My Account</span>
 
         <figure className='flex items-center gap-3'>
-          {/* Text (hidden on smaller screens if you want it compact) */}
           <figcaption className='flex flex-col items-end leading-tight max-[1024px]:hidden'>
             <span className='text-[11px] font-medium capitalize tracking-wide text-slate-500 dark:text-slate-400'>
               Welcome back,
@@ -63,7 +78,6 @@ export function UserInfo() {
             </span>
           </figcaption>
 
-          {/* Avatar */}
           <div className='relative'>
             <Image
               src={USER.img}
@@ -73,11 +87,10 @@ export function UserInfo() {
               width={200}
               height={200}
             />
-            {/* Online dot */}
-            <span
+            {/* <span
               className='absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border border-white bg-emerald-400 shadow-sm dark:border-slate-900'
               aria-hidden
-            />
+            /> */}
           </div>
         </figure>
       </DropdownTrigger>
@@ -118,7 +131,6 @@ export function UserInfo() {
             className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white'
           >
             <UserIcon />
-
             <span className='mr-auto text-base font-medium'>View profile</span>
           </Link>
 
@@ -128,7 +140,6 @@ export function UserInfo() {
             className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white'
           >
             <SettingsIcon />
-
             <span className='mr-auto text-base font-medium'>
               Account Settings
             </span>
@@ -138,17 +149,14 @@ export function UserInfo() {
         <hr className='border-[#E8E8E8] dark:border-dark-3' />
 
         <div className='p-2 text-base text-[#4B5563] dark:text-dark-6'>
-          <Link
-            href={'/auth/signin'}
-            className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white'
-            onClick={() => {
-              setIsOpen(false);
-            }}
+          <button
+            type='button'
+            className='flex w-full items-center gap-2.5 rounded-lg px-2.5 py-[9px] hover:bg-gray-2 hover:text-dark dark:hover:bg-dark-3 dark:hover:text-white cursor-pointer'
+            onClick={handleLogout}
           >
             <LogOutIcon />
-
             <span className='text-base font-medium'>Log out</span>
-          </Link>
+          </button>
         </div>
       </DropdownContent>
     </Dropdown>

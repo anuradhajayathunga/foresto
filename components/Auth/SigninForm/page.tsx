@@ -1,57 +1,66 @@
 'use client';
+
 import { EmailIcon, PasswordIcon } from '@/assets/icons';
 import Link from 'next/link';
 import InputGroup from '../../FormElements/InputGroup';
 import { Checkbox } from '../../FormElements/checkbox';
-import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { useToast } from '@/hooks/useToast';
+import { apiFetch } from '@/lib/api'; // 👈 use shared API helper instead of local API_BASE_URL
 
-const API_BASE_URL = 'http://localhost:8000';
+type LoginForm = {
+  email: string;
+  password: string;
+};
+
+type LoginResponse = {
+  access: string;
+  refresh: string;
+};
 
 export default function SigninWithPassword() {
   const router = useRouter();
-  // const { success, error } = useToast();
-  const [form, setForm] = useState({
+
+  const [form, setForm] = useState<LoginForm>({
     email: '',
     password: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/token/`, {
+      // apiFetch handles:
+      // - BASE_URL and env
+      // - JSON headers
+      // - throwing on non-OK responses
+      const data = await apiFetch<LoginResponse>('/api/token/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
 
-      if (!res.ok) {
-        throw new Error('Invalid credentials');
-      }
-
-      const data = await res.json();
-      // Simple approach: store in localStorage (for demo).
-      // For production: use httpOnly cookies via Next.js API routes.
+      // Store tokens in localStorage (demo/simple approach)
       localStorage.setItem('access_token', data.access);
       localStorage.setItem('refresh_token', data.refresh);
 
       router.push('/dashboard');
       toast.success('Account Login Successfully.');
-    } catch (err: any) {
-      const msg = setError(err.message || 'Login failed');
-      toast.error(`failed:${msg}`);
+    } catch (err) {
+      const msg =
+        err instanceof Error ? err.message : 'Login failed. Please try again.';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -59,6 +68,13 @@ export default function SigninWithPassword() {
 
   return (
     <form onSubmit={handleSubmit}>
+      {/* Optional error message display */}
+      {error && (
+        <div className='mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700'>
+          {error}
+        </div>
+      )}
+
       <InputGroup
         type='email'
         label='Email'
@@ -67,7 +83,7 @@ export default function SigninWithPassword() {
         name='email'
         handleChange={handleChange}
         value={form.email}
-        // icon={<EmailIcon />}
+        icon={<EmailIcon />}
       />
 
       <InputGroup
@@ -78,7 +94,7 @@ export default function SigninWithPassword() {
         name='password'
         handleChange={handleChange}
         value={form.password}
-        // icon={<PasswordIcon />}
+        icon={<PasswordIcon />}
       />
 
       <div className='mb-6 flex items-center justify-between gap-2 pb-2 text-sm font-medium'>
@@ -88,12 +104,6 @@ export default function SigninWithPassword() {
           withIcon='check'
           withBg
           radius='md'
-          // onChange={(e) =>
-          //   setData({
-          //     ...form,
-          //     remember: e.target.checked,
-          //   })
-          // }
         />
 
         <Link
@@ -107,9 +117,10 @@ export default function SigninWithPassword() {
       <div className='mb-4.5'>
         <button
           type='submit'
-          className='flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary p-4 font-medium text-white transition hover:bg-opacity-90'
+          disabled={loading}
+          className='flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary p-4 font-medium text-white transition hover:bg-opacity-90 disabled:opacity-70'
         >
-          Sign In
+          {loading ? 'Signing in...' : 'Sign In'}
           {loading && (
             <span className='inline-block h-4 w-4 animate-spin rounded-full border-2 border-solid border-white border-t-transparent dark:border-primary dark:border-t-transparent' />
           )}
