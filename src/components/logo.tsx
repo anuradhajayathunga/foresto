@@ -16,10 +16,10 @@ export function Logo({
   showText = true,
 }: LogoProps) {
   // Calculate text size based on icon size to maintain proportion
-  const textSizeClass = size < 50 ? 'text-2xl' : 'text-3xl';
+  const textSizeClass = size < 50 ? 'text-3xl' : 'text-4xl';
 
   return (
-    <div className={cn('flex items-center gap-1 select-none', className)}>
+    <div className={cn('flex items-end gap-1 select-none', className)}>
       {/* Logo Mark Container */}
       {/* SaaS Standard: Subtle gradient background + border to make it pop on any bg */}
       <div
@@ -65,7 +65,7 @@ export function Logo({
       {showText && (
         <span
           className={cn(
-            'font-bold tracking-tight text-foreground leading-none', // Solid color is more legible/professional
+            'font-bold tracking-tight text-foreground leading-none mb-1', // Solid color is more legible/professional
             textSizeClass,
             textClassName
           )}
