@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
-
+import darkLogo from '@/assets/logo/logo-v1.svg';
+import logo from '@/assets/logo/logo-v1.svg';
 type LogoProps = {
   className?: string;
   textClassName?: string;
@@ -8,13 +9,12 @@ type LogoProps = {
   showText?: boolean; // Useful for collapsed sidebars
 };
 
-export function Logo({ 
-  className, 
-  textClassName, 
-  size = 40, 
-  showText = true 
+export function Logo({
+  className,
+  textClassName,
+  size = 40,
+  showText = true,
 }: LogoProps) {
-  
   // Calculate text size based on icon size to maintain proportion
   const textSizeClass = size < 50 ? 'text-2xl' : 'text-3xl';
 
@@ -27,21 +27,38 @@ export function Logo({
           'relative grid place-items-center rounded-[10px] overflow-hidden shrink-0',
           // 'bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900',
           // 'border border-border/60 shadow-sm',
-          // 'transition-transform duration-300 hover:scale-105' 
+          'transition-transform duration-300 hover:scale-105'
         )}
         style={{ width: size, height: size }}
       >
-        <Image
-          src="/logo/foresto-logo.png"
+        {/* <Image
+          src="/images/logo/log-v1.svg"
           alt="Foresto"
           width={size}
           height={size}
           className="p-[15%] object-contain drop-shadow-sm" // p-[15%] gives it breathing room
           priority
+        /> */}
+        <Image
+          src={logo}
+          className='dark:hidden p-[5%] object-contain drop-shadow-sm'
+          alt='Foresto'
+          width={size}
+          height={size}
+          priority
         />
-        
+
+        <Image
+          src={darkLogo}
+          className='hidden dark:block p-[5%] object-contain drop-shadow-sm'
+          alt='Foresto'
+          width={size}
+          height={size}
+          priority
+        />
+
         {/* Optional: Subtle Shine Effect overlay */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        <div className='absolute inset-0 bg-gradient-to-tr from-white/0 via-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500 pointer-events-none' />
       </div>
 
       {/* Word Mark */}
@@ -55,7 +72,7 @@ export function Logo({
         >
           foresto
           {/* Optional: Add a period or accent color dot for modern flair */}
-          <span className="text-primary">.</span>
+          <span className='text-primary'>.</span>
         </span>
       )}
     </div>
