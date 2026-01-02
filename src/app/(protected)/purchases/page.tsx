@@ -193,7 +193,7 @@ export default function PurchasesPage() {
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                     placeholder="Search supplier, reference..."
-                    className="pl-9 h-9 bg-background"
+                    className="pl-9 h-9 "
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
@@ -262,7 +262,7 @@ export default function PurchasesPage() {
       <div className="rounded-md border bg-card shadow-sm overflow-hidden">
         <Table>
           <TableHeader>
-            <TableRow className="bg-muted/50 hover:bg-muted/50">
+            <TableRow className="hover:bg-muted/50">
               <TableHead className="w-[100px] pl-6">ID</TableHead>
               <TableHead className="w-[140px]">Date</TableHead>
               <TableHead>Supplier</TableHead>
@@ -293,9 +293,9 @@ export default function PurchasesPage() {
                 </TableCell>
                 <TableCell>
                     {p.invoice_no ? (
-                        <Badge variant="secondary" className="font-mono text-xs font-normal">
+                        <span  className="font-mono text-xs font-normal bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-900/20 dark:text-rose-400 dark:border-rose-800">
                             {p.invoice_no}
-                        </Badge>
+                        </span>
                     ) : (
                         <span className="text-muted-foreground text-xs italic">--</span>
                     )}
