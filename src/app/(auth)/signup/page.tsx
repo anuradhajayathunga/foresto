@@ -153,8 +153,8 @@ export default function RegisterPage() {
                     foresto
                     <span className='text-primary'>.</span>
                   </div>
-                  <div className='text-xs text-white/65 font-medium'>
-                    AI Powered Restaurant Admin
+                  <div className='text-xs text-white/65 font-medium capitalize'>
+                    Modern and Elegant Restaurant Experience.
                   </div>
                 </div>
               </div>
