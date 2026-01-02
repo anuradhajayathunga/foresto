@@ -16,18 +16,18 @@ export function Logo({
 }: LogoProps) {
   
   // Calculate text size based on icon size to maintain proportion
-  const textSizeClass = size < 40 ? 'text-lg' : 'text-2xl';
+  const textSizeClass = size < 50 ? 'text-2xl' : 'text-3xl';
 
   return (
-    <div className={cn('flex items-center gap-3 select-none', className)}>
+    <div className={cn('flex items-center gap-1 select-none', className)}>
       {/* Logo Mark Container */}
       {/* SaaS Standard: Subtle gradient background + border to make it pop on any bg */}
       <div
         className={cn(
           'relative grid place-items-center rounded-[10px] overflow-hidden shrink-0',
-          'bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900',
-          'border border-border/60 shadow-sm',
-          'transition-transform duration-300 hover:scale-105' // Subtle interaction
+          // 'bg-gradient-to-br from-white to-gray-100 dark:from-gray-800 dark:to-gray-900',
+          // 'border border-border/60 shadow-sm',
+          // 'transition-transform duration-300 hover:scale-105' 
         )}
         style={{ width: size, height: size }}
       >
