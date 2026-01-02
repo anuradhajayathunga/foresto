@@ -102,24 +102,24 @@ export default function LoginPage() {
   }
 
   return (
-    <main className='min-h-screen w-full bg-background text-foreground'>
+    <main className='min-h-screen w-full bg-background  text-foreground'>
       <div className='min-h-screen mx-auto flex'>
         {/* LEFT: Brand / Trust / Status */}
-        <aside className='hidden lg:flex w-1/2 relative overflow-hidden px-12 py-12'>
+        <aside className='hidden lg:flex w-1/2 relative overflow-hidden px-12 py-12 '>
           {/* Use your restaurant sidebar token as the base */}
           <div className='absolute inset-0 bg-restaurant-sidebar' />
           {/* depth + subtle gradient */}
           <div className='absolute inset-0 bg-gradient-to-br from-black/30 via-transparent to-black/40' />
 
           {/* dotted pattern */}
-          <div
+          {/* <div
             className='absolute inset-0 opacity-25 pointer-events-none'
             style={{
               backgroundImage:
                 'radial-gradient(circle at 2px 2px, rgb(255 255 255 / 0.18) 1px, transparent 0)',
               backgroundSize: '46px 46px',
             }}
-          />
+          /> */}
 
           {/* glow accents using restaurant primary */}
           <div className='absolute -top-24 -left-28 h-[420px] w-[420px] rounded-full blur-3xl bg-[color:var(--restaurant-primary)]/15' />
