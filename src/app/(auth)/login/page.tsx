@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { GoogleIcon, XIcon } from '@/assets/icons';
+import logo from '@/assets/logo/logo-v1.svg';
+
 import {
   Activity,
   CheckCircle2,
@@ -25,6 +27,7 @@ import {
 } from 'lucide-react';
 import { AuthButton } from '@/components/auth/AuthButtons';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
 
 type LoginResponse = {
   access: string;
@@ -102,24 +105,24 @@ export default function LoginPage() {
   }
 
   return (
-    <main className='min-h-screen w-full bg-background text-foreground'>
+    <main className='min-h-screen w-full bg-background  text-foreground'>
       <div className='min-h-screen mx-auto flex'>
         {/* LEFT: Brand / Trust / Status */}
-        <aside className='hidden lg:flex w-1/2 relative overflow-hidden px-12 py-12'>
+        <aside className='hidden lg:flex w-1/2 relative overflow-hidden px-12 py-12 '>
           {/* Use your restaurant sidebar token as the base */}
           <div className='absolute inset-0 bg-restaurant-sidebar' />
           {/* depth + subtle gradient */}
           <div className='absolute inset-0 bg-gradient-to-br from-black/30 via-transparent to-black/40' />
 
           {/* dotted pattern */}
-          <div
+          {/* <div
             className='absolute inset-0 opacity-25 pointer-events-none'
             style={{
               backgroundImage:
                 'radial-gradient(circle at 2px 2px, rgb(255 255 255 / 0.18) 1px, transparent 0)',
               backgroundSize: '46px 46px',
             }}
-          />
+          /> */}
 
           {/* glow accents using restaurant primary */}
           <div className='absolute -top-24 -left-28 h-[420px] w-[420px] rounded-full blur-3xl bg-[color:var(--restaurant-primary)]/15' />
@@ -130,14 +133,22 @@ export default function LoginPage() {
             <div>
               <div className='flex items-center gap-3'>
                 <div className='flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 backdrop-blur border border-white/15'>
-                  <ShieldCheck className='h-6 w-6' />
+                  <Image
+                    src={logo}
+                    alt='Foresto'
+                    width='50'
+                    height='50'
+                    className='p-[10%]' // p-[15%] gives it breathing room
+                    priority
+                  />
                 </div>
                 <div className='leading-tight'>
-                  <div className='text-3xl font-bold tracking-tight'>
-                    Foresto
+                  <div className='text-3xl font-bold tracking-tight  leading-none'>
+                    foresto
+                    <span className='text-primary'>.</span>
                   </div>
-                  <div className='text-xs text-white/65 font-medium'>
-                    {/* Secure back-office access */}
+                  <div className='text-xs text-white/65 font-medium capitalize'>
+                    Modern and Elegant Restaurant Experience.
                   </div>
                 </div>
               </div>

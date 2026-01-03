@@ -294,7 +294,7 @@ export default function AddMenuItemPage() {
                     <Label>Price (LKR)</Label>
                     <div className='relative'>
                       <span className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-sm'>
-                        Rs.
+                        LKR
                       </span>
                       <Input
                         type='number'
@@ -372,7 +372,7 @@ export default function AddMenuItemPage() {
                           form.is_available ? 'bg-green-500' : 'bg-gray-400'
                         }`}
                       />
-                      {form.is_available ? 'In Stock' : 'Unavailable'}
+                      {form.is_available ? 'Active' : 'Inactive'}
                     </Badge>
                   </div>
                 </div>
@@ -392,7 +392,7 @@ export default function AddMenuItemPage() {
                         Price
                       </p>
                       <p className='font-bold text-xl text-gray-900'>
-                        Rs. {Number(form.price).toFixed(2)}
+                        LKR {Number(form.price).toFixed(2)}
                       </p>
                     </div>
                     <Badge variant='outline' className='border-gray-200'>
