@@ -32,7 +32,6 @@ export default function RootLayout({ children }: PropsWithChildren) {
       className={cn(poppins.variable, sinhala.variable)}
     >
       <body className={cn(poppins.className)}>
-        <RootLoading />
         <Providers>{children}</Providers>
         <Toaster position="bottom-right" />
       </body>
