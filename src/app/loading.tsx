@@ -5,7 +5,7 @@ export default function RootLoading() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 3000); 
+    const t = setTimeout(() => setLoading(false), 4000); 
     return () => clearTimeout(t);
   }, []);
 
