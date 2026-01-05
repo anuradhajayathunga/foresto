@@ -138,7 +138,7 @@ flowchart TB
 ### 1) Clone the Repository
 ``` bash
 git clone https://github.com/anuradhajayathunga/foresto-fe.git
-cd <frontend-folder>
+cd foresto-fe
 ```
 
 ### 2) Install dependencies
@@ -333,3 +333,10 @@ npm run test -- src/features/auth/auth.test.ts
 * **Husky:** Git hooks for pre-commit checks
 
 * * *
+## Deployment
+### Vercel
+* Push repo to GitHub/GitLab
+* Import into Vercel
+* Add environment variables:
+  * `NEXT_PUBLIC_API_BASE_URL` → http://localhost:8000
+* Deploy
