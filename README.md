@@ -340,8 +340,8 @@ npm run test -- src/features/auth/auth.test.ts
 * Add environment variables:
   * `NEXT_PUBLIC_API_BASE_URL` → http://localhost:8000
 * Deploy
-  
-* * *
+
+  ---
 
 ## Version Control & Collaboration
 ### Branching Strategy (Git Flow Inspired)
@@ -378,6 +378,51 @@ Types:
 * `test`: Adding or updating tests
 * `chore`: Maintenance tasks
 
-  * * *
+---
 
 ## Contributing
+**1. Setup Development Environment**
+``` bash
+git clone <repository-url>
+cd foresto-fe
+npm install
+cp  .env.local
+```
+**2. Setup Development Environment**
+``` bash
+git checkout -b feature/im-feature-branch
+```
+**3. Make Changes**
+* Follow the established code style
+* Write tests for new functionality
+* Update documentation as needed
+**4. Run Quality Checks**
+``` bash
+npm run lint
+npm run type-check
+npm run test
+```
+**5. Run Quality Checks**
+``` bash
+git add .
+git commit -m "feat(scope): description of changes"
+```
+**6. Push and Create PR**
+``` bash
+git push origin feature/your-feature-name
+```
+### Code Review Guidelines
+* Review within 24 hours if possible
+* Be constructive and specific in feedback
+* Check for security issues
+* Ensure tests are adequate
+* Verify documentation is updated
+
+---
+
+## Related Repositories
+**Backend Repository:** [foresto-be](<https://github.com/anuradhajayathunga/foresto-be.git>)
+
+## License
+This project is part of an academic final year project at [Sri Lanka Institute of Information Technology].
+**License:** MIT
