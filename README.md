@@ -341,8 +341,6 @@ npm run test -- src/features/auth/auth.test.ts
   * `NEXT_PUBLIC_API_BASE_URL` → http://localhost:8000
 * Deploy
 
-  ---
-
 ## Version Control & Collaboration
 ### Branching Strategy (Git Flow Inspired)
 * **`main`** → Production-ready code
@@ -363,11 +361,9 @@ npm run test -- src/features/auth/auth.test.ts
 8. **Merge:** Use "Squash and Merge" for clean history
 
 ### Commit Message Convention
+Examples:
 ```
 feat(forecasting): add forecast results visualization
-fix(auth): handle expired token redirect
-docs(readme): update deployment instructions
-refactor(api): simplify axios interceptors
 ```
 Types:
 * `feat`: New feature
@@ -377,8 +373,6 @@ Types:
 * `refactor`: Code refactoring
 * `test`: Adding or updating tests
 * `chore`: Maintenance tasks
-
----
 
 ## Contributing
 **1. Setup Development Environment**
