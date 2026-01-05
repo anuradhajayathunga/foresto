@@ -61,21 +61,20 @@ The application securely communicates with the backend API for authentication, d
 
 ```mermaid
 flowchart LR
-    User[Users] -->|Browser| FE[Frontend: Next.js]
-    FE -->|HTTPS API Calls| BE[Backend: Django/DRF]
-    BE --> DB[(PostgreSQL)]
-    BE --> Queue[(Redis/Celery)]
-    BE --> ML[AI/Forecasting Service]
+    U[Users / Evaluators] -->|Browser| FE[Frontend: Next.js App]
+    FE -->|HTTPS REST/JSON| BE[Backend: Django / DRF API]
+    BE --> DB[(Database: PostgreSQL/MySQL)]
+    BE --> R[(Redis / Queue)]
+    BE --> ML[Forecasting / ML Service]
     ML --> DB
 
 ### Frontend Internal Flow
 
-
 flowchart TB
-    App[App Router] --> Pages[Pages & Layouts]
-    Pages --> Server[Server Components]
-    Pages --> Client[Client Components]
-    Client --> UI[shadcn/ui Components]
-    Client --> API[API Layer (fetch/axios)]
-    API --> Backend[Backend API]
-    Client --> State[State Management]
+    Pages[Routes / Pages] --> Layouts[Layouts]
+    Pages --> Features[Feature Modules]
+    Features --> UI[Reusable UI Components]
+    Features --> API[API Client Layer]
+    API -->|fetch/axios| Backend[(Backend API)]
+    Features --> State[State Management]
+
