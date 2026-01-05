@@ -162,4 +162,14 @@ NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 > If your backend uses CORS, ensure the backend allows requests from `http://localhost:3000`.
 
 * * *
+### 4) Start Development Server
+``` bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
+> Open [http://localhost:3000](http://localhost:3000) in your browser.
 
+* * *
