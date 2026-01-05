@@ -424,10 +424,13 @@ git push origin feature/your-feature-name
 ## License
 This project is part of an academic final year project at [Sri Lanka Institute of Information Technology].
 **License:** MIT
----
+
 
 ## Maintainers & Team
-* * *
+* Member 1: — [GitHub](https://github.com/)
+* Member 2: — [GitHub](https://github.com/)
+* Member 3: — [GitHub](https://github.com/)
+* Member 4: — [GitHub](https://github.com/)
 
 ## Support
 For issues, questions, or contributions:
