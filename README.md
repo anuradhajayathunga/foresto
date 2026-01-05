@@ -137,7 +137,7 @@ flowchart TB
 
 ### 1) Clone the Repository
 ``` bash
-git clone <YOUR_FRONTEND_REPO_LINK>
+git clone https://github.com/anuradhajayathunga/foresto-fe.git
 cd <frontend-folder>
 ```
 
