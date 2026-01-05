@@ -238,7 +238,7 @@ export default function MenuPage() {
       {/* 2. Metrics (KPIs) */}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
         <MetricCard
-          title='Total Catalog'
+          title='Total Menu Items'
           value={metrics.activeteMenuItems}
           icon={Utensils}
           sub='Active dishes'
@@ -586,7 +586,7 @@ function MenuActions({ item, inStock, onToggleStock }: any) {
 }
 
 function SkeletonCard() {
-  return <div className='h-64 bg-muted/20 rounded-xl animate-pulse' />;
+  return <div className='h-64 bg-gray-200 dark:bg-muted/20 rounded-xl animate-pulse' />;
 }
 
 function EmptyState() {

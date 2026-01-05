@@ -81,7 +81,11 @@ function todayISO() {
   const dd = String(d.getDate()).padStart(2, '0');
   return `${yyyy}-${mm}-${dd}`;
 }
-
+// Utility for safe number parsing
+function n(v: string) {
+  const x = Number(v);
+  return Number.isFinite(x) ? x : 0;
+}
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !Array.isArray(payload) || payload.length === 0) return null;
 
@@ -123,6 +127,7 @@ export default function UnifiedForecastPage() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [selectedChartId, setSelectedChartId] = useState<string>('');
+  
 
   // --- Dialog State ---
   const [draftOpen, setDraftOpen] = useState(false);
@@ -138,7 +143,7 @@ export default function UnifiedForecastPage() {
     setErr(null);
     try {
       const p = await getIngredientPlan(scope, 7, 200);
-      setPlanData(p);
+      setPlanData(p as IngredientPlan);
 
       const h = await getForecastHistory(14, 50);
       setHistoryData(h);

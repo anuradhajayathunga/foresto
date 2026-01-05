@@ -9,15 +9,17 @@ import { compactFormat } from '@/lib/format-number';
 
 import { Button } from '@/components/ui/button';
 import { OverviewCard } from './card';
-import { 
-  Coins, 
-  ShoppingCart, 
-  Calculator, 
-  AlertTriangle, 
-  ArrowUpRight, 
+import {
+  Coins,
+  ShoppingCart,
+  Calculator,
+  AlertTriangle,
+  ArrowUpRight,
   ArrowDownRight,
-  TrendingUp
+  TrendingUp,
+  Utensils,
 } from 'lucide-react';
+import { Category, fetchCategories, fetchItems, MenuItem } from '@/lib/menu';
 
 type Row = { date: string; count: number; total: string };
 
@@ -25,6 +27,11 @@ export function DashboardKpiCards() {
   const [week, setWeek] = useState<Row[]>([]);
   const [lowStock, setLowStock] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [items, setItems] = useState<MenuItem[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [search, setSearch] = useState('');
+  const [stockStatus, setStockStatus] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     let mounted = true;
@@ -32,7 +39,7 @@ export function DashboardKpiCards() {
       try {
         const [w, items] = await Promise.all([
           getSalesSummary(7),
-          getLowStockItems().catch(() => [])
+          getLowStockItems().catch(() => []),
         ]);
         if (mounted) {
           setWeek(w);
@@ -42,7 +49,9 @@ export function DashboardKpiCards() {
         if (mounted) setLoading(false);
       }
     })();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const weekTotal = useMemo(
@@ -61,6 +70,55 @@ export function DashboardKpiCards() {
   );
 
   const lowStockCount = lowStock.length;
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const cats = await fetchCategories();
+        setCategories(cats);
+      } catch (error) {
+        console.error('Failed categories:', error);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const data = await fetchItems(
+          selectedCategory ?? undefined,
+          search.trim() || undefined
+        );
+        setItems(data);
+
+        const initialStock: Record<number, boolean> = {};
+        data.forEach((i) => {
+          initialStock[i.id] = i.is_available;
+        });
+        setStockStatus((prev) => ({ ...initialStock, ...prev }));
+      } catch (error) {
+        console.error('Failed items:', error);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [selectedCategory, search]);
+
+  // --- Metrics ---
+  const metrics = useMemo(() => {
+    const total = items.length;
+    const avg =
+      total > 0
+        ? items.reduce((acc, curr) => acc + Number(curr.price), 0) / total
+        : 0;
+    return {
+      totalItems: total,
+      activeteMenuItems: items.filter((i) => i.is_available).length,
+      activeCategories: categories.length,
+      avgPrice: avg,
+    };
+  }, [items, categories]);
 
   return (
     <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
@@ -83,25 +141,30 @@ export function DashboardKpiCards() {
       />
 
       <OverviewCard
-        label='Avg. Order Value'
-        value={`Rs. ${avgOrder.toFixed(0)}`}
-        subLabel='Last 7 days'
-        Icon={Calculator}
-        trend={{ value: 2.1, direction: 'down' }} // Mock trend
+        label='Total Menu Items'
+        value={metrics.activeCategories}
+        subLabel='Active dishes'
+        Icon={Utensils}
+        // trend={{ value: 2.1, direction: 'down' }} // Mock trend
         loading={loading}
       />
 
       <OverviewCard
         label='Inventory Alert'
         value={lowStockCount === 0 ? 'Healthy' : `${lowStockCount} Items`}
-        subLabel={lowStockCount === 0 ? 'Stock levels optimal' : 'Below reorder point'}
+        subLabel={
+          lowStockCount === 0 ? 'Stock levels optimal' : 'Below reorder point'
+        }
         Icon={AlertTriangle}
         variant={lowStockCount > 0 ? 'warning' : 'default'}
         loading={loading}
         rightSlot={
           lowStockCount > 0 && (
             <Link href='/inventory?tab=low'>
-              <Button  variant='outline' className="h-7 text-xs border-amber-200 text-amber-700 hover:bg-amber-50 hover:text-amber-800 dark:border-amber-800 dark:text-amber-400">
+              <Button
+                variant='outline'
+                className='h-7 text-xs border-amber-200 text-amber-700 hover:bg-amber-50 hover:text-amber-800 dark:border-amber-800 dark:text-amber-400'
+              >
                 Review
               </Button>
             </Link>
