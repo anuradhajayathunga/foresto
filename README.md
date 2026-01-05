@@ -340,3 +340,44 @@ npm run test -- src/features/auth/auth.test.ts
 * Add environment variables:
   * `NEXT_PUBLIC_API_BASE_URL` → http://localhost:8000
 * Deploy
+  
+* * *
+
+## Version Control & Collaboration
+### Branching Strategy (Git Flow Inspired)
+* **`main`** → Production-ready code
+* **`develop`** → Integration branch for features
+* **`feature/*`** → New features (e.g., `feature/forecasting-ui`)
+* **`bugfix/*`** → Bug fixes (e.g., `bugfix/login-error`)
+* **`hotfix/*`** → Critical production fixes
+* **`release/*`** → Release preparation branches
+
+### Pull Request Workflow
+1. **Create Branch:** From `develop` for features, from `main` for hotfixes
+2. **Develop:** Commit frequently with descriptive messages
+3. **Test:** Ensure all tests pass and code is linted
+4. **Push:** Push branch to remote repository
+5. **PR:** Create Pull Request to target branch
+6. **Review:** At least 1 team member must review
+7. **CI/CD:** Wait for automated checks to pass
+8. **Merge:** Use "Squash and Merge" for clean history
+
+### Commit Message Convention
+```
+feat(forecasting): add forecast results visualization
+fix(auth): handle expired token redirect
+docs(readme): update deployment instructions
+refactor(api): simplify axios interceptors
+```
+Types:
+* `feat`: New feature
+* `fix`: Bug fix
+* `docs`: Documentation changes
+* `style`: Code style changes (formatting, etc.)
+* `refactor`: Code refactoring
+* `test`: Adding or updating tests
+* `chore`: Maintenance tasks
+
+  * * *
+
+## Contributing
