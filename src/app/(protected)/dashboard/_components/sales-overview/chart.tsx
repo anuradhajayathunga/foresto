@@ -112,7 +112,7 @@ export function SalesOverviewChart({ data, loading }: Props) {
                 <span class="block w-2 h-2 rounded-full" style="background-color: ${colors[0]}"></span>
                 Revenue
               </span>
-              <span class="font-mono font-medium text-gray-900 dark:text-gray-50">Rs. ${revenue?.toLocaleString() || 0}</span>
+              <span class="font-mono font-medium text-gray-900 dark:text-gray-50">LKR ${revenue?.toLocaleString() || 0}</span>
             </div>
 
             <div class="flex items-center justify-between gap-4">
@@ -120,7 +120,7 @@ export function SalesOverviewChart({ data, loading }: Props) {
                 <span class="block w-2 h-2 rounded-full" style="background-color: ${colors[1]}"></span>
                 Avg Order
               </span>
-              <span class="font-mono font-medium text-gray-900 dark:text-gray-50">Rs. ${Math.round(avg || 0).toLocaleString()}</span>
+              <span class="font-mono font-medium text-gray-900 dark:text-gray-50">LKR ${Math.round(avg || 0).toLocaleString()}</span>
             </div>
           </div>
         `;

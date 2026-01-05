@@ -124,7 +124,7 @@ export function DashboardKpiCards() {
     <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
       <OverviewCard
         label='Total Revenue'
-        value={`Rs. ${compactFormat(weekTotal)}`}
+        value={`LKR ${compactFormat(weekTotal)}`}
         subLabel='Last 7 days'
         Icon={Coins}
         trend={{ value: 12.5, direction: 'up' }} // Mock trend

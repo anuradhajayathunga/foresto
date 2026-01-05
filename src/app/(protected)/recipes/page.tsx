@@ -484,7 +484,7 @@ export default function RecipesPage() {
                         </TableCell>
                         <TableCell className='text-right font-mono text-muted-foreground'>
                           {/* Mock unit cost display for UI demo */}
-                          Rs. {((l.ingredient % 10) * 50 + 50).toFixed(2)}
+                          LKR {((l.ingredient % 10) * 50 + 50).toFixed(2)}
                         </TableCell>
                         <TableCell className='text-right pr-6'>
                           <div className='flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity'>
@@ -541,7 +541,7 @@ export default function RecipesPage() {
                     Selling Price
                   </span>
                   <span className='text-lg font-mono font-medium'>
-                    Rs. {financials.sellingPrice.toFixed(2)}
+                    LKR {financials.sellingPrice.toFixed(2)}
                   </span>
                 </div>
 
@@ -552,7 +552,7 @@ export default function RecipesPage() {
                     </span>
                   </div>
                   <span className='text-lg font-mono font-medium text-destructive'>
-                    - Rs. {financials.totalCost.toFixed(2)}
+                    - LKR {financials.totalCost.toFixed(2)}
                   </span>
                 </div>
 
@@ -575,7 +575,7 @@ export default function RecipesPage() {
                         : 'text-destructive'
                     )}
                   >
-                    Rs. {financials.profit.toFixed(2)}
+                    LKR {financials.profit.toFixed(2)}
                   </span>
                 </div>
               </div>
