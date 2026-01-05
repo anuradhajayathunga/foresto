@@ -754,10 +754,10 @@ export default function UnifiedForecastPage() {
                     )}
                   </TableCell>
                   <TableCell className='text-right font-mono text-sm text-muted-foreground'>
-                    {x.current_stock}
+                    {x.current_stock} ({x.unit})
                   </TableCell>
                   <TableCell className='text-right font-mono text-sm'>
-                    {x.required_qty}
+                    {x.required_qty} ({x.unit})
                   </TableCell>
                   <TableCell
                     className={`text-right font-mono text-sm ${

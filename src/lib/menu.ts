@@ -17,6 +17,7 @@ export type MenuItem = {
   description: string;
   price: string;
   is_available: boolean;
+  is_active?:boolean;
 };
 
 export async function fetchCategories(): Promise<Category[]> {

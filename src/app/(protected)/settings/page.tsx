@@ -109,7 +109,7 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
-      <div className='flex flex-col gap-8 p-6 md:p-8 max-w-5xl mx-auto w-full'>
+      <div className='flex flex-col gap-8 p-6 md:p-8 mx-auto w-full'>
         {/* Header Section */}
         <div className='flex flex-col md:flex-row md:items-start md:justify-between gap-4 border-b border-border/40 pb-6'>
           <div className='space-y-1'>
