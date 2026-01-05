@@ -383,7 +383,7 @@ Types:
 ## Contributing
 **1. Setup Development Environment**
 ``` bash
-git clone <repository-url>
+git clone https://github.com/anuradhajayathunga/foresto-fe.git
 cd foresto-fe
 npm install
 cp  .env.local
@@ -418,11 +418,19 @@ git push origin feature/your-feature-name
 * Ensure tests are adequate
 * Verify documentation is updated
 
----
-
 ## Related Repositories
 **Backend Repository:** [foresto-be](<https://github.com/anuradhajayathunga/foresto-be.git>)
 
 ## License
 This project is part of an academic final year project at [Sri Lanka Institute of Information Technology].
 **License:** MIT
+---
+
+## Maintainers & Team
+* * *
+
+## Support
+For issues, questions, or contributions:
+1. Check existing [Issues](https://github.com/anuradhajayathunga/foresto-fe/issues)
+2. Create a new Issue with detailed description
+3. Email: hi.foresto@gmail.com (if applicable)
