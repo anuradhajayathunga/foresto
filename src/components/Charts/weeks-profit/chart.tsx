@@ -98,11 +98,11 @@ export function WeeksProfitChart({ data }: PropsType) {
         options={options}
         series={[
           {
-            name: 'Actual Sales',
+            name: 'Sales',
             data: data.sales,
           },
           {
-            name: 'Predicted Sales',
+            name: 'Revenue',
             data: data.revenue,
           },
         ]}
