@@ -267,6 +267,7 @@ export default function PurchasesPage() {
               <TableHead className="w-[140px]">Date</TableHead>
               <TableHead>Supplier</TableHead>
               <TableHead>Invoice No</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-right pr-8">Total Amount</TableHead>
               <TableHead className="w-[50px]"></TableHead>
             </TableRow>
@@ -299,6 +300,20 @@ export default function PurchasesPage() {
                     ) : (
                         <span className="text-muted-foreground text-xs italic">--</span>
                     )}
+                </TableCell>
+                <TableCell className='uppercase text-xs font-medium px-2 py-1'>
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      p.status === 'POSTED'
+                        ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400'
+                        : p.status === 'VOID'
+                        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400'
+                        : 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                    )}
+                  >
+                    {p.status}
+                  </Badge>
                 </TableCell>
                 <TableCell className="text-right pr-8">
                   <div className="font-bold tabular-nums">
