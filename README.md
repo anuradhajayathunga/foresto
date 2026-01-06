@@ -4,7 +4,7 @@ A modern, responsive web frontend for the **SmartRestaurant AI System**, built w
 
 The application securely communicates with the backend API for authentication, data fetching, and triggering AI-powered operations.
 
-[![Vercel Deploy](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=<foresto-fe-ku6u-nr9d663rb-anuradhajayathungas-projects.vercel.app>)
+[![Vercel Deploy](https://vercel.com/button)](https://foresto-fe.vercel.app/)
 
 ---
 
