@@ -254,7 +254,7 @@ export default function SaleDetailPage() {
                                 </div>
                                 <div>
                                     <span className="text-muted-foreground block">Total Spend</span>
-                                    <span className="font-medium">Rs. 45,200</span>
+                                    <span className="font-medium">LKR 45,200</span>
                                 </div>
                             </div>
                         )}

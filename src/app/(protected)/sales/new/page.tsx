@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchItems, MenuItem } from '@/lib/menu';
 import { createSale } from '@/lib/sales';
@@ -26,6 +26,8 @@ import {
   UtensilsCrossed,
   Package,
   Loader2,
+  ChevronRight,
+  ChevronLeft,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -56,6 +58,11 @@ export default function NewSalePage() {
   // Submission State
   const [err, setErr] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  // --- Scroll Logic (kept from your original code) ---
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -137,7 +144,7 @@ export default function NewSalePage() {
         discount: discountNum.toFixed(2),
         tax: taxNum.toFixed(2),
         items: cart.map((c) => ({ menu_item: c.id, qty: c.qty })),
-        status: 'DRAF',
+        status: 'PAID',
       };
       const created = await createSale(payload);
       router.push(`/sales/${created.id}`);
@@ -147,6 +154,20 @@ export default function NewSalePage() {
       setSaving(false);
     }
   }
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const scrollAmount = 300;
+      container.scrollTo({
+        left:
+          direction === 'left'
+            ? container.scrollLeft - scrollAmount
+            : container.scrollLeft + scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
 
   // Helper for Currency
   const formatMoney = (amount: number) =>
@@ -187,29 +208,50 @@ export default function NewSalePage() {
               <Search className='absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400' />
               <Input
                 placeholder='Search items by name...'
-                className='h-11 rounded-lg border-zinc-200 bg-white pl-10 text-sm dark:border-transparent'
+                className='h-11 rounded-lgborder-zinc-200 bg-white pl-10 text-sm dark:bg-gray-700 dark:border-transparent'
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
 
-            <div className='flex gap-2 overflow-x-auto pb-2 scrollbar-none'>
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={cn(
-                    'px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 border',
-
-                    selectedCategory === cat
-                      ? 'bg-primary/10 text-primary dark:text-primary border-primary/30  shadow-sm'
-                      : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300 ' +
-                          'dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-700 dark:hover:border-gray-600'
-                  )}
-                >
-                  {cat}
-                </button>
-              ))}
+            <div className='relative group w-full lg:flex-1 max-w-5xl'>
+              {showLeftArrow && (
+                <div className='absolute inset-y-0 left-0 z-10 h-full flex items-center bg-gradient-to-r from-background to-transparent pr-4'>
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    className='h-6 w-6 rounded-full bg-background shadow-sm border'
+                    onClick={() => scroll('left')}
+                  >
+                    <ChevronLeft className='h-3 w-3' />
+                  </Button>
+                </div>
+              )}
+              <div
+                ref={scrollContainerRef}
+                className='flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 mask-linear-fade'
+              >
+                {categories.map((cat) => (
+                  <FilterButton
+                    key={cat}
+                    active={selectedCategory === cat}
+                    onClick={() => setSelectedCategory(cat)}
+                    label={cat}
+                  />
+                ))}
+              </div>
+              {showRightArrow && (
+                <div className='absolute inset-y-0 right-0 z-10 h-full flex items-center bg-gradient-to-l from-background to-transparent pl-4'>
+                  <Button
+                    variant='ghost'
+                    size='icon'
+                    className='h-6 w-6 rounded-full bg-background shadow-sm border'
+                    onClick={() => scroll('right')}
+                  >
+                    <ChevronRight className='h-3 w-3' />
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -374,11 +416,11 @@ export default function NewSalePage() {
             </div>
 
             {/* Payment Methods */}
-            <div className="mb-4">
-              <Label className="mb-2 block text-[10px] uppercase tracking-wider text-zinc-500">
+            <div className='mb-4'>
+              <Label className='mb-2 block text-[10px] uppercase tracking-wider text-zinc-500'>
                 Payment Method
               </Label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className='grid grid-cols-3 gap-2'>
                 {[
                   { id: 'CASH', icon: Banknote, label: 'Cash' },
                   { id: 'CARD', icon: CreditCard, label: 'Card' },
@@ -394,7 +436,7 @@ export default function NewSalePage() {
                         : 'bg-white text-zinc-500 border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300 dark:bg-zinc-800 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-700'
                     )}
                   >
-                    <m.icon className="h-4 w-4" />
+                    <m.icon className='h-4 w-4' />
                     {m.label}
                   </button>
                 ))}
@@ -447,5 +489,20 @@ export default function NewSalePage() {
         </div>
       </div>
     </div>
+  );
+}
+function FilterButton({ active, onClick, label }: any) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        'px-3.5 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all border',
+        active
+          ? 'bg-primary text-primary-foreground border-primary shadow-sm'
+          : 'bg-background text-muted-foreground border-border hover:bg-muted/50'
+      )}
+    >
+      {label}
+    </button>
   );
 }

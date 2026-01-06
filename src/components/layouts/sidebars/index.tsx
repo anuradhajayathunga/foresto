@@ -10,6 +10,21 @@ import { ArrowLeftIcon, ChevronUp } from './icons';
 import { MenuItem } from './menu-item';
 import { useSidebarContext } from './sidebar-context';
 
+interface NavItem {
+  title: string;
+  url: string;
+}
+
+interface NavSection {
+  label: string;
+  items: Array<{
+    title: string;
+    icon: React.ComponentType;
+    items: NavItem[];
+    url?: string;
+  }>;
+}
+
 export function Sidebar() {
   const pathname = usePathname();
   const { setIsOpen, isOpen, isMobile, toggleSidebar } = useSidebarContext();
@@ -17,30 +32,24 @@ export function Sidebar() {
 
   const toggleExpanded = (title: string) => {
     setExpandedItems((prev) => (prev.includes(title) ? [] : [title]));
-
-    // Uncomment the following line to enable multiple expanded items
-    // setExpandedItems((prev) =>
-    //   prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title],
-    // );
   };
 
   useEffect(() => {
-    // Keep collapsible open, when it's subpage is active
-    NAV_DATA.some((section) => {
+    // Keep collapsible open when it's subpage is active
+    NAV_DATA.some((section: NavSection) => {
       return section.items.some((item) => {
-        return item.items.some((subItem) => {
+        return item.items.some((subItem: NavItem) => {
           if (subItem.url === pathname) {
             if (!expandedItems.includes(item.title)) {
               toggleExpanded(item.title);
             }
-
-            // Break the loop
             return true;
           }
+          return false;
         });
       });
     });
-  }, [pathname]);
+  }, [pathname, expandedItems, toggleExpanded]);
 
   return (
     <>
@@ -55,7 +64,7 @@ export function Sidebar() {
 
       <aside
         className={cn(
-          'min-w-xs overflow-hidden border-r border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 transition-[width] duration-200 ease-linear z-30',
+          'min-w-[300px] overflow-hidden border-r border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 transition-[width] duration-200 ease-linear z-30',
           isMobile ? 'fixed bottom-0 top-0 z-30' : 'sticky top-0 h-screen',
           isOpen ? 'w-full' : 'w-0'
         )}
@@ -65,27 +74,25 @@ export function Sidebar() {
       >
         <div className='flex h-full flex-col py-10 pl-[25px] pr-[7px]'>
           <div className='relative pr-4.5'>
-            <div className='flex items-center justify-between gap-3'>
-              <Link
-                href='/'
-                onClick={() => isMobile && toggleSidebar()}
-                className='flex items-center'
-                //  rounded-xl px-2 py-2 hover:bg-muted/40 transition
-                aria-label='Go to dashboard'
-              >
-                <Logo />
-              </Link>
+            <Link
+              href={'/dashboard'}
+              onClick={() => isMobile && toggleSidebar()}
+              className='flex items-center'
+              aria-label='Go to dashboard'
+            >
+              <Logo />
+            </Link>
 
-              {isMobile && (
-                <button
-                  onClick={toggleSidebar}
-                  className='rounded-lg p-2 text-muted-foreground hover:text-foreground hover:bg-muted/40 transition'
-                >
-                  <span className='sr-only'>Close Menu</span>
-                  <ArrowLeftIcon className='size-6' />
-                </button>
-              )}
-            </div>
+            {isMobile && (
+              <button
+                onClick={toggleSidebar}
+                className='rounded-lg p-2 text-muted-foreground hover:text-foreground hover:bg-muted/40 transition'
+              >
+                <span className='sr-only'>Close Menu</span>
+
+                <ArrowLeftIcon className='ml-auto size-7' />
+              </button>
+            )}
           </div>
 
           {/* Navigation */}
@@ -108,10 +115,7 @@ export function Sidebar() {
                               )}
                               onClick={() => toggleExpanded(item.title)}
                             >
-                              <item.icon
-                                className='size-6 shrink-0'
-                                aria-hidden='true'
-                              />
+                              <item.icon aria-hidden='true' />
 
                               <span>{item.title}</span>
 
@@ -162,12 +166,9 @@ export function Sidebar() {
                                 className='flex items-center gap-3 py-3'
                                 as='link'
                                 href={href}
-                                isActive={isActive} // <--- Updated here
+                                isActive={isActive}
                               >
-                                <item.icon
-                                  className='size-6 shrink-0'
-                                  aria-hidden='true'
-                                />
+                                <item.icon aria-hidden='true' />
 
                                 <span>{item.title}</span>
                               </MenuItem>

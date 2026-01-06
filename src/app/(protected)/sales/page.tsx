@@ -84,16 +84,15 @@ export default function SalesPage() {
 
   // --- Metrics Calculation ---
   const metrics = useMemo(() => {
-    const totalRevenue = sales.reduce(
-      (sum, sale) => sum + parseFloat(sale.total || '0'),
-      0
-    );
+    const totalRevenue = sales
+      .filter((s) => s.status.toLowerCase() === 'paid')
+      .reduce((sum, sale) => sum + parseFloat(sale.total || '0'), 0);
     const count = sales.length;
     const averageOrder = count > 0 ? totalRevenue / count : 0;
 
     // Calculate success rate based on 'completed' status
     const successful = sales.filter(
-      (s) => s.status.toLowerCase() === 'completed'
+      (s) => s.status.toLowerCase() === 'paid'
     ).length;
     const successRate = count > 0 ? (successful / count) * 100 : 0;
 

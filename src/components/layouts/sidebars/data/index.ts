@@ -20,7 +20,22 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-export const NAV_DATA = [
+interface NavItem {
+  title: string;
+  url: string;
+}
+
+interface NavSection {
+  label: string;
+  items: Array<{
+    title: string;
+    icon: React.ComponentType;
+    items: NavItem[];
+    url?: string;
+  }>;
+}
+
+export const NAV_DATA: NavSection[] = [
   {
     label: '  ',
     items: [
@@ -76,9 +91,15 @@ export const NAV_DATA = [
         icon: Receipt,
         items: [],
       },
+      // {
+      //   title: 'Analytics',
+      //   url: '/analytics',
+      //   icon: BarChart3,
+      //   items: [],
+      // },
       {
         title: 'AI Forecasting',
-        url: '/forecating',
+        url: '/forecasting',
         icon: Sparkles,
         items: [],
       },
@@ -96,4 +117,4 @@ export const NAV_DATA = [
       // },
     ],
   },
-];
+] as const;

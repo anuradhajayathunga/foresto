@@ -77,8 +77,10 @@ import {
   Calculator,
   CheckCircle2,
   AlertTriangle,
+  FileDown,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { CsvImporter } from '@/components/csv-importer';
 
 function num(v: string) {
   const n = Number(v);
@@ -91,6 +93,7 @@ export default function RecipesPage() {
   const [selectedMenuId, setSelectedMenuId] = useState<string>('');
   const [lines, setLines] = useState<RecipeLine[]>([]);
   const [loadingLines, setLoadingLines] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
 
   // Dialog States
   const [addOpen, setAddOpen] = useState(false);
@@ -261,29 +264,60 @@ export default function RecipesPage() {
         </div>
 
         {/* Global Context Switcher */}
-        <div className='w-full md:w-[350px] space-y-2'>
-          <Label className='text-xs uppercase tracking-wider text-muted-foreground font-semibold'>
-            Active Menu Item
-          </Label>
-          <Select value={selectedMenuId} onValueChange={setSelectedMenuId}>
-            <SelectTrigger className='h-11 shadow-sm border-border bg-background'>
-              <SelectValue placeholder='Select Item to Edit' />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectLabel>Menu Items</SelectLabel>
-                {menuItems.map((m) => (
-                  <SelectItem
-                    key={m.id}
-                    value={String(m.id)}
-                    className='cursor-pointer'
-                  >
-                    <span className='font-medium'>{m.name}</span>
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+        <div className='flex flex-col sm:flex-row sm:items-end gap-3 w-full md:w-auto'>
+          <div className='w-full md:w-[300px] space-y-2'>
+            <Label className='text-xs uppercase tracking-wider text-muted-foreground font-semibold'>
+              Active Menu Item
+            </Label>
+
+            <Select value={selectedMenuId} onValueChange={setSelectedMenuId}>
+              <SelectTrigger className='h-11  shadow-sm border-border bg-background w-full'>
+                <SelectValue placeholder='Select Item to Edit' />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectGroup>
+                  <SelectLabel>Menu Items</SelectLabel>
+                  {menuItems.map((m) => (
+                    <SelectItem
+                      key={m.id}
+                      value={String(m.id)}
+                      className='cursor-pointer'
+                    >
+                      <span className='font-medium'>{m.name}</span>
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Dialog open={isImportOpen} onOpenChange={setIsImportOpen}>
+            <DialogTrigger asChild>
+              <Button
+                variant='outline'
+                size='sm'
+                className='h-9 w-full sm:w-auto'
+              >
+                <FileDown className='h-4 w-4 mr-2' />
+                Import
+              </Button>
+            </DialogTrigger>
+
+            <DialogContent className='sm:max-w-xl'>
+              <DialogHeader>
+                <DialogTitle>Bulk Data Import</DialogTitle>
+              </DialogHeader>
+
+              <DialogFooter className='py-2'>
+                <CsvImporter
+                  kind='recipes'
+                  title='Import Menu Recipes'
+                  description='Upload CSV to bulk update.'
+                />
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
@@ -450,7 +484,7 @@ export default function RecipesPage() {
                         </TableCell>
                         <TableCell className='text-right font-mono text-muted-foreground'>
                           {/* Mock unit cost display for UI demo */}
-                          Rs. {((l.ingredient % 10) * 50 + 50).toFixed(2)}
+                          LKR {((l.ingredient % 10) * 50 + 50).toFixed(2)}
                         </TableCell>
                         <TableCell className='text-right pr-6'>
                           <div className='flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity'>
@@ -507,7 +541,7 @@ export default function RecipesPage() {
                     Selling Price
                   </span>
                   <span className='text-lg font-mono font-medium'>
-                    Rs. {financials.sellingPrice.toFixed(2)}
+                    LKR {financials.sellingPrice.toFixed(2)}
                   </span>
                 </div>
 
@@ -518,7 +552,7 @@ export default function RecipesPage() {
                     </span>
                   </div>
                   <span className='text-lg font-mono font-medium text-destructive'>
-                    - Rs. {financials.totalCost.toFixed(2)}
+                    - LKR {financials.totalCost.toFixed(2)}
                   </span>
                 </div>
 
@@ -541,7 +575,7 @@ export default function RecipesPage() {
                         : 'text-destructive'
                     )}
                   >
-                    Rs. {financials.profit.toFixed(2)}
+                    LKR {financials.profit.toFixed(2)}
                   </span>
                 </div>
               </div>

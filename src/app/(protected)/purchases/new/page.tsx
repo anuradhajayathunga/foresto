@@ -442,7 +442,7 @@ export default function NewPurchaseInvoicePage() {
               <div className='w-full md:w-1/3 space-y-3'>
                 <div className='flex justify-between text-sm'>
                   <span className='text-muted-foreground'>Subtotal</span>
-                  <span>Rs. {subtotal.toFixed(2)}</span>
+                  <span>LKR {subtotal.toFixed(2)}</span>
                 </div>
 
                 <div className='flex items-center justify-between text-sm gap-4'>
@@ -476,7 +476,7 @@ export default function NewPurchaseInvoicePage() {
                 <div className='flex justify-between items-center pt-1'>
                   <span className='text-base font-semibold'>Total Payable</span>
                   <span className='text-xl font-bold'>
-                    Rs.{' '}
+                    LKR{' '}
                     {total.toLocaleString('en-LK', {
                       minimumFractionDigits: 2,
                     })}

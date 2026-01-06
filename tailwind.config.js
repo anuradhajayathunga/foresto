@@ -11,7 +11,12 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-poppins)', 'system-ui', 'sans-serif'],
+        sans: [
+          'var(--font-poppins)',
+          'var(--font-sinhala)',
+          'system-ui',
+          'sans-serif',
+        ],
       },
 
       screens: {
