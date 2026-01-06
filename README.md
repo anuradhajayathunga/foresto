@@ -1,10 +1,10 @@
-# Foresto | Modern and Elegant Restaurant Experience - Frontend
+# Foresto | Modern and Elegant Restaurant Experience — Frontend
 
 A modern, responsive web frontend for the **SmartRestaurant AI System**, built with **Next.js** (App Router). It provides intuitive dashboards and workflows for restaurant operations, including sales tracking, purchasing, inventory management, demand forecasting, and analytics.
 
 The application securely communicates with the backend API for authentication, data fetching, and triggering AI-powered operations.
 
-[![Vercel Deploy](https://vercel.com/button)](<https://foresto-fe-ku6u.vercel.app/login>)
+[![Vercel Deploy](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=<foresto-fe-ku6u-nr9d663rb-anuradhajayathungas-projects.vercel.app>)
 
 ---
 
@@ -421,10 +421,10 @@ This project is part of an academic final year project at [Sri Lanka Institute o
 
 
 ## Maintainers & Team
-* Member 1: — [GitHub](https://github.com/)
-* Member 2: — [GitHub](https://github.com/)
-* Member 3: — [GitHub](https://github.com/)
-* Member 4: — [GitHub](https://github.com/)
+* Member 1: JAYATHUNGA A G I A — [GitHub](https://github.com/anuradhajayathunga)
+* Member 2: THILAKARATHNAW P N S — [GitHub](https://github.com/NethumThilakarathna)
+* Member 3: ALAWATHTHA K A — [GitHub](https://github.com/AlawaththaKA)
+* Member 4: Fernando W G P N — [GitHub](https://github.com/PraveenNavodya)
 
 ## Support
 For issues, questions, or contributions:
