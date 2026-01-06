@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+@theme {
+  /* This registers your variables so Tailwind can use them as classes */
+  --color-bg-card: #161616;
+  --color-border-dark: #262626;
+  --color-cta-orange: #FF6A00;
+}
+
+:root {
+  --bg-main: #000000;
+}
+
+body {
+  background-color: var(--bg-main);
+  /* This creates the premium depth glow */
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(158, 27, 50, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(91, 45, 139, 0.1) 0px, transparent 50%);
+}
