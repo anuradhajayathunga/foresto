@@ -1,4 +1,3 @@
-
 import {
   Home,
   UtensilsCrossed,
@@ -14,11 +13,31 @@ import {
   LayoutDashboard,
   ClipboardList,
   CookingPot,
+  icons,
+  Truck,
+  Utensils,
+  Sparkle,
+  Sparkles,
 } from 'lucide-react';
 
-export const NAV_DATA = [
+interface NavItem {
+  title: string;
+  url: string;
+}
+
+interface NavSection {
+  label: string;
+  items: Array<{
+    title: string;
+    icon: React.ComponentType;
+    items: NavItem[];
+    url?: string;
+  }>;
+}
+
+export const NAV_DATA: NavSection[] = [
   {
-    label: 'Overview',
+    label: '  ',
     items: [
       {
         title: 'Dashboard',
@@ -26,66 +45,76 @@ export const NAV_DATA = [
         icon: LayoutDashboard,
         items: [],
       },
+    ],
+  },
+  {
+    label: 'MENU & KITCHEN',
+    items: [
       {
-        title: 'Sales (POS)',
-        url: '/sales',
-        icon: Receipt,
+        title: 'Menu Items',
+        url: '/menu',
+        icon: Utensils,
+        items: [],
+      },
+      {
+        title: 'Recipes',
+        url: '/recipes',
+        icon: CookingPot,
         items: [],
       },
     ],
   },
   {
-    label: 'Management',
+    label: 'INVENTORY & SUPPLY',
     items: [
-      {
-        title: 'Menu Items',
-        url: '/menu',
-        icon: UtensilsCrossed,
-        items: [],
-      },
       {
         title: 'Inventory',
         url: '/inventory',
         icon: Package,
         items: [],
       },
-            {
+      {
         title: 'Purchases',
         url: '/purchases',
         icon: ClipboardList,
         items: [],
       },
-      {
-        title: 'Kitchen',
-        url: '/recipes',
-        icon: CookingPot,
-        items: [],
-      },
-    ]
+      { title: 'Suppliers', url: '/suppliers', icon: Truck, items: [] },
+    ],
   },
   {
     label: 'Business',
     items: [
       {
-        title: 'Staff & Users',
-        icon: UserCog,
-        items: [
-          { title: 'Employees', url: '/staff', items: [] },
-          { title: 'Suppliers', url: '/suppliers', items: [] },
-        ],
-      },
-      {
-        title: 'Analytics',
-        url: '/analytics',
-        icon: BarChart3,
+        title: 'Sales (POS)',
+        url: '/sales',
+        icon: Receipt,
         items: [],
       },
+      // {
+      //   title: 'Analytics',
+      //   url: '/analytics',
+      //   icon: BarChart3,
+      //   items: [],
+      // },
       {
-        title: 'Settings',
-        url: '/settings',
-        icon: Settings,
+        title: 'AI Forecasting',
+        url: '/forecasting',
+        icon: Sparkles,
         items: [],
       },
+      // {
+      //   title: 'Staff & Users',
+      //   icon: UserCog,
+      //   items: [{ title: 'Employees', url: '/staff', items: [] }],
+      // },
+
+      // {
+      //   title: 'Settings',
+      //   url: '/settings',
+      //   icon: Settings,
+      //   items: [],
+      // },
     ],
   },
-];
+] as const;

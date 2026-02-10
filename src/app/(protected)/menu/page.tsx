@@ -1,7 +1,13 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { fetchCategories, fetchItems, Category, MenuItem } from '@/lib/menu';
+import {
+  fetchCategories,
+  fetchItems,
+  Category,
+  MenuItem,
+  updateMenuItem,
+} from '@/lib/menu';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
@@ -54,6 +60,7 @@ import {
 import Link from 'next/link';
 import { CsvImporter } from '@/components/csv-importer';
 import { cn } from '@/lib/utils'; // Ensure you have this utility
+import toast from 'react-hot-toast';
 
 export default function MenuPage() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -127,8 +134,11 @@ export default function MenuPage() {
           search.trim() || undefined
         );
         setItems(data);
+
         const initialStock: Record<number, boolean> = {};
-        data.forEach((i) => (initialStock[i.id] = true));
+        data.forEach((i) => {
+          initialStock[i.id] = i.is_available;
+        });
         setStockStatus((prev) => ({ ...initialStock, ...prev }));
       } catch (error) {
         console.error('Failed items:', error);
@@ -147,13 +157,39 @@ export default function MenuPage() {
         : 0;
     return {
       totalItems: total,
+      activeteMenuItems: items.filter((i) => i.is_available).length,
       activeCategories: categories.length,
       avgPrice: avg,
     };
   }, [items, categories]);
 
-  const toggleStock = (id: number) => {
-    setStockStatus((prev) => ({ ...prev, [id]: !prev[id] }));
+  const toggleStock = async (id: number, currentStatus: boolean) => {
+    const newStatus = !currentStatus;
+
+    // 1. OPTIMISTIC UPDATE: Update both states immediately so UI reflects change instantly
+    setStockStatus((prev) => ({ ...prev, [id]: newStatus }));
+
+    // Update the main items list too, to keep everything in sync
+    setItems((prevItems) =>
+      prevItems.map((item) =>
+        item.id === id ? { ...item, is_available: newStatus } : item
+      )
+    );
+
+    // 2. API CALL: Save to database in background
+    try {
+      await updateMenuItem(id, { is_available: newStatus });
+    } catch (error) {
+      console.error('Failed to update status on server:', error);
+
+      // 3. REVERT: If server fails, undo the changes
+      setStockStatus((prev) => ({ ...prev, [id]: currentStatus }));
+      setItems((prevItems) =>
+        prevItems.map((item) =>
+          item.id === id ? { ...item, is_available: currentStatus } : item
+        )
+      );
+    }
   };
 
   return (
@@ -202,8 +238,8 @@ export default function MenuPage() {
       {/* 2. Metrics (KPIs) */}
       <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
         <MetricCard
-          title='Total Catalog'
-          value={metrics.totalItems}
+          title='Total Menu Items'
+          value={metrics.activeteMenuItems}
           icon={Utensils}
           sub='Active dishes'
         />
@@ -215,7 +251,7 @@ export default function MenuPage() {
         />
         <MetricCard
           title='Avg. Price'
-          value={`Rs. ${metrics.avgPrice.toFixed(0)}`}
+          value={`LKR ${metrics.avgPrice.toFixed(0)}`}
           icon={TrendingUp}
           sub='Per item average'
         />
@@ -334,8 +370,12 @@ export default function MenuPage() {
             <MenuGridItem
               key={item.id}
               item={item}
-              inStock={stockStatus[item.id]}
-              onToggleStock={() => toggleStock(item.id)}
+              // Ensure we fallback to item.is_available if stockStatus is missing
+              inStock={stockStatus[item.id] ?? item.is_available}
+              // Pass the current value to the toggle function
+              onToggleStock={() =>
+                toggleStock(item.id, stockStatus[item.id] ?? item.is_available)
+              }
             />
           ))}
         </div>
@@ -357,8 +397,13 @@ export default function MenuPage() {
                 <MenuListItem
                   key={item.id}
                   item={item}
-                  inStock={stockStatus[item.id]}
-                  onToggleStock={() => toggleStock(item.id)}
+                  inStock={stockStatus[item.id] ?? item.is_available}
+                  onToggleStock={() =>
+                    toggleStock(
+                      item.id,
+                      stockStatus[item.id] ?? item.is_available
+                    )
+                  }
                 />
               ))}
             </TableBody>
@@ -412,12 +457,16 @@ function MenuGridItem({ item, inStock, onToggleStock }: any) {
           <ImageIcon className='h-12 w-12' />
         </div>
         <div className='absolute top-2 right-2'>
-          <Badge
-            variant={inStock ? 'secondary' : 'destructive'}
-            className='backdrop-blur-md bg-background/80 shadow-sm'
+          <div
+            className={cn(
+              'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
+              item.is_available
+                ? 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                : 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+            )}
           >
-            {inStock ? 'In Stock' : 'Out'}
-          </Badge>
+            {item.is_available ? 'Active' : 'Inactive'}
+          </div>
         </div>
       </div>
       <CardContent className='p-4'>
@@ -441,7 +490,7 @@ function MenuGridItem({ item, inStock, onToggleStock }: any) {
         </div>
         <div className='flex items-end justify-between mt-3'>
           <div className='text-lg font-bold'>
-            Rs. {Number(item.price).toFixed(2)}
+            LKR {Number(item.price).toFixed(2)}
           </div>
         </div>
       </CardContent>
@@ -469,18 +518,18 @@ function MenuListItem({ item, inStock, onToggleStock }: any) {
         </Badge>
       </TableCell>
       <TableCell className='text-right font-medium'>
-        Rs. {Number(item.price).toFixed(2)}
+        LKR {Number(item.price).toFixed(2)}
       </TableCell>
       <TableCell className='text-center'>
         <div
           className={cn(
             'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium',
-            inStock
+            item.is_available
               ? 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400'
               : 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400'
           )}
         >
-          {inStock ? 'Active' : 'Inactive'}
+          {item.is_available ? 'Active' : 'Inactive'}
         </div>
       </TableCell>
       <TableCell>
@@ -509,22 +558,35 @@ function MenuActions({ item, inStock, onToggleStock }: any) {
       <DropdownMenuContent align='end'>
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Edit Item</DropdownMenuItem>
+        <Link href={`/menu/${item.id}/edit`}>
+          <DropdownMenuItem className='cursor-pointer'>
+            Edit Menu
+          </DropdownMenuItem>
+        </Link>
         <DropdownMenuItem onClick={onToggleStock}>
-          {inStock ? 'Mark Unavailable' : 'Mark Available'}
+          <div
+            className={cn(
+              'inline-flex items-center',
+              item.is_available
+                ? ' text-red-700  dark:text-red-400'
+                : ' text-green-700  dark:text-green-400'
+            )}
+          >
+            {item.is_available ? 'Inactive' : 'Active'}
+          </div>
         </DropdownMenuItem>
         <DropdownMenuItem>View Recipe</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className='text-destructive focus:text-destructive'>
+        {/* <DropdownMenuItem className='text-destructive focus:text-destructive'>
           Delete
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
 
 function SkeletonCard() {
-  return <div className='h-64 bg-muted/20 rounded-xl animate-pulse' />;
+  return <div className='h-64 bg-gray-200 dark:bg-muted/20 rounded-xl animate-pulse' />;
 }
 
 function EmptyState() {

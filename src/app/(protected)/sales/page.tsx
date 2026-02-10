@@ -20,6 +20,8 @@ import {
   ArrowDownRight,
   FileText,
   FileDown,
+  Globe,
+  Banknote,
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -82,16 +84,15 @@ export default function SalesPage() {
 
   // --- Metrics Calculation ---
   const metrics = useMemo(() => {
-    const totalRevenue = sales.reduce(
-      (sum, sale) => sum + parseFloat(sale.total || '0'),
-      0
-    );
+    const totalRevenue = sales
+      .filter((s) => s.status.toLowerCase() === 'paid')
+      .reduce((sum, sale) => sum + parseFloat(sale.total || '0'), 0);
     const count = sales.length;
     const averageOrder = count > 0 ? totalRevenue / count : 0;
 
     // Calculate success rate based on 'completed' status
     const successful = sales.filter(
-      (s) => s.status.toLowerCase() === 'completed'
+      (s) => s.status.toLowerCase() === 'paid'
     ).length;
     const successRate = count > 0 ? (successful / count) * 100 : 0;
 
@@ -135,13 +136,13 @@ export default function SalesPage() {
             'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800',
           icon: CheckCircle2,
         };
-      case 'pending':
+      case 'draf':
         return {
           color:
             'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800',
           icon: Clock,
         };
-      case 'cancelled':
+      case 'void':
       case 'refunded':
         return {
           color:
@@ -322,10 +323,38 @@ export default function SalesPage() {
                   </TableCell>
                   <TableCell>
                     <div className='flex items-center gap-2 text-sm font-medium'>
-                      <div className='p-1 rounded bg-muted'>
-                        <CreditCard className='h-3 w-3 text-muted-foreground' />
-                      </div>
-                      {s.payment_method}
+                      {(() => {
+                        const getPaymentIcon = (method: string) => {
+                          const m = method.toLowerCase();
+                          if (m.includes('cash')) return Banknote;
+                          if (m.includes('card')) return CreditCard;
+                          if (m.includes('online')) return Globe;
+                          return CreditCard;
+                        };
+
+                        const getPaymentColor = (method: string) => {
+                          const m = method.toLowerCase();
+                          if (m.includes('cash'))
+                            return 'text-rose-500 dark:text-rose-400';
+                          if (m.includes('card'))
+                            return 'text-amber-500 dark:text-amber-400';
+                          if (m.includes('online'))
+                            return 'text-emerald-500 dark:text-emerald-400';
+                          return 'text-slate-600 ';
+                        };
+
+                        const PaymentIcon = getPaymentIcon(s.payment_method);
+                        const colorClass = getPaymentColor(s.payment_method);
+
+                        return (
+                          <>
+                            <div className={cn('p-1 rounded', colorClass)}>
+                              <PaymentIcon className='h-3 w-3' />
+                            </div>
+                            {s.payment_method}
+                          </>
+                        );
+                      })()}
                     </div>
                   </TableCell>
                   <TableCell>

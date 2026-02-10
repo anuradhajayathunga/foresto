@@ -91,7 +91,7 @@ export function SalesOverview({ className }: { className?: string }) {
             </p>
             <div className='flex items-baseline gap-2'>
               <h3 className='text-3xl font-bold tracking-tight text-foreground'>
-                Rs. {standardFormat(revenueTotal)}
+                LKR {standardFormat(revenueTotal)}
               </h3>
               <Badge
                 variant='outline'

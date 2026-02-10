@@ -36,6 +36,7 @@ import {
   Save,
   Loader2,
 } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
 
 function slugify(s: string) {
   return s
@@ -155,10 +156,17 @@ export default function AddMenuItemPage() {
 
   if (loading) {
     return (
-      <div className='min-h-screen bg-gray-50 flex items-center justify-center'>
-        <div className='flex flex-col items-center gap-2'>
-          <Loader2 className='h-8 w-8 animate-spin text-gray-900' />
-          <p className='text-sm text-gray-500'>Initializing editor...</p>
+      <div className='mx-auto max-w-6xl space-y-6 p-6'>
+        <div className='flex justify-between items-center'>
+          <Skeleton className='h-8 w-32' />
+          <Skeleton className='h-10 w-24' />
+        </div>
+        <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+          <div className='lg:col-span-2 space-y-6'>
+            <Skeleton className='h-[300px] w-full rounded-xl' />
+            <Skeleton className='h-[200px] w-full rounded-xl' />
+          </div>
+          <Skeleton className='h-[400px] w-full rounded-xl' />
         </div>
       </div>
     );
@@ -294,7 +302,7 @@ export default function AddMenuItemPage() {
                     <Label>Price (LKR)</Label>
                     <div className='relative'>
                       <span className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-sm'>
-                        Rs.
+                        LKR
                       </span>
                       <Input
                         type='number'
@@ -355,7 +363,7 @@ export default function AddMenuItemPage() {
 
               {/* The Card Component being Previewed */}
               <Card className='overflow-hidden shadow-md border-gray-200'>
-                <div className='relative h-48 bg-gray-100 flex items-center justify-center text-gray-300'>
+                <div className='relative h-48 bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-300'>
                   <ImageIcon className='h-12 w-12' />
                   {/* Mock Badge in Preview */}
                   <div className='absolute top-3 right-3'>
@@ -372,7 +380,7 @@ export default function AddMenuItemPage() {
                           form.is_available ? 'bg-green-500' : 'bg-gray-400'
                         }`}
                       />
-                      {form.is_available ? 'In Stock' : 'Unavailable'}
+                      {form.is_available ? 'Active' : 'Inactive'}
                     </Badge>
                   </div>
                 </div>
@@ -392,7 +400,7 @@ export default function AddMenuItemPage() {
                         Price
                       </p>
                       <p className='font-bold text-xl text-gray-900'>
-                        Rs. {Number(form.price).toFixed(2)}
+                        LKR {Number(form.price).toFixed(2)}
                       </p>
                     </div>
                     <Badge variant='outline' className='border-gray-200'>

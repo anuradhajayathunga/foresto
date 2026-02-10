@@ -111,3 +111,20 @@ export async function voidPurchaseInvoice(id: string, reason?: string) {
   if (!res.ok) throw data;
   return data as PurchaseInvoice;
 }
+export async function createPurchaseDraftFromForecast(payload: {
+  supplier: number;
+  scope: "tomorrow" | "next7";
+  horizon_days?: number;
+  top_n?: number;
+  include_ok?: boolean;
+  invoice_date?: string; // YYYY-MM-DD
+  note?: string;
+}) {
+  const res = await authFetch("/api/purchases/invoices/from-forecast/", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw data;
+  return data as { id: number };
+}

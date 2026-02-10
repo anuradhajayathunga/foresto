@@ -17,12 +17,6 @@ const NotFound: React.FC = () => {
 
   return (
     <div className='relative min-h-screen'>
-      {loaded && (
-        <div className='fixed left-0 top-0 z-[999999] flex h-screen w-screen items-center justify-center bg-white dark:bg-black'>
-          <div className='h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent' />
-        </div>
-      )}
-
       <div className='relative z-[1] flex min-h-screen flex-col items-center justify-center overflow-hidden p-6'>
         <div className='pointer-events-none absolute right-0 top-0 -z-[1] w-full max-w-[250px] xl:max-w-[450px]'>
           <img src='/images/grids/grid-02.svg' alt='grid' />
