@@ -9,8 +9,6 @@ export type InventoryItem = {
   reorder_level: string;
   cost_per_unit?: string;
   is_active: boolean;
-  created_at?: string;
-  updated_at?: string;
 };
 
 export type StockMovement = {
@@ -22,7 +20,7 @@ export type StockMovement = {
   reason: string;
   note?: string;
   created_by?: number;
-  created_by_username?: string;
+  created_by_email?: string;
   created_at?: string;
 };
 
