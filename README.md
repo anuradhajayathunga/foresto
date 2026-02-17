@@ -165,7 +165,7 @@ python manage.py runserver
 > Open API usually available at: [`http://127.0.0.1:8000/`](http://127.0.0.1:8000/)
 
 
-### Frontend Setup (Next.js)
+## Frontend Setup (Next.js)
 ```bash
 cd frontend
 npm install       # or yarn install
@@ -180,8 +180,9 @@ If you have Docker installed, use the included docker-compose.yml for easy fulls
 ```bash
 docker-compose up --build
 ```
-Frontend: [`http://localhost:3000`](http://localhost:3000) 
-Backend: [`http://127.0.0.1:8000/`](http://127.0.0.1:8000/)
+
+> Open Frontend: [`http://localhost:3000`](http://localhost:3000) 
+> Open Backend: [`http://127.0.0.1:8000/`](http://127.0.0.1:8000/)
 
 
 ## Project Structure
