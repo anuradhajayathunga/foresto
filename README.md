@@ -113,7 +113,7 @@ cd foresto
 ## Environment Variables
 - Copy and configure the provided `.env.example` files in both the backend and frontend folders.
 - Never commit your real secrets!
-- 
+
 ## Backend (backend/.env)
 ``` env
 DJANGO_SECRET_KEY=your-secret
@@ -181,8 +181,8 @@ If you have Docker installed, use the included docker-compose.yml for easy fulls
 docker-compose up --build
 ```
 
-> Open Frontend: [`http://localhost:3000`](http://localhost:3000) 
-> Open Backend: [`http://127.0.0.1:8000/`](http://127.0.0.1:8000/)
+- Frontend: [`http://localhost:3000`](http://localhost:3000) 
+- Backend: [`http://127.0.0.1:8000/`](http://127.0.0.1:8000/)
 
 
 ## Project Structure
