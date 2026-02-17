@@ -41,15 +41,26 @@ export async function getSale(id: number) {
   return data as Sale;
 }
 
-export async function getSalesSummary(days = 7) {
+export type SalesSummary = {
+  period_days: number;
+  total_revenue: string;
+  total_qty: string;
+  by_item: Array<{
+    menu_item: number;
+    menu_item_name: string;
+    qty: string;
+    revenue: string;
+  }>;
+  by_day: Array<{
+    day: string;
+    qty: string;
+    revenue: string;
+  }>;
+};
+
+export async function getSalesSummary(days = 7): Promise<SalesSummary> {
   const res = await authFetch(`/api/sales/sales/summary/?days=${days}`);
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw data;
-  return data as {
-    period_days: number;
-    total_revenue: string;
-    total_qty: string;
-    by_item: Array<{ menu_item: number; menu_item_name: string; qty: string; revenue: string }>;
-    by_day: Array<{ day: string; qty: string; revenue: string }>;
-  };
+  return data as SalesSummary;
 }

@@ -3,120 +3,119 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 
-import { getSalesSummary } from '@/lib/sales';
+import { getSalesSummary, type SalesSummary } from '@/lib/sales';
 import { getLowStockItems } from '@/lib/inventory';
 import { compactFormat } from '@/lib/format-number';
 
 import { Button } from '@/components/ui/button';
 import { OverviewCard } from './card';
-import {
-  Coins,
-  ShoppingCart,
-  Calculator,
-  AlertTriangle,
-  ArrowUpRight,
-  ArrowDownRight,
-  TrendingUp,
-  Utensils,
-} from 'lucide-react';
+import { Coins, ShoppingCart, AlertTriangle, Utensils } from 'lucide-react';
 import { Category, fetchCategories, fetchItems, MenuItem } from '@/lib/menu';
 
-type Row = { date: string; count: number; total: string };
+type Row = { date: string; count: number; total: number };
+type LowStockItem = Awaited<ReturnType<typeof getLowStockItems>>[number];
 
 export function DashboardKpiCards() {
-  const [week, setWeek] = useState<Row[]>([]);
-  const [lowStock, setLowStock] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [summary, setSummary] = useState<SalesSummary | null>(null);
+  const [lowStock, setLowStock] = useState<LowStockItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [items, setItems] = useState<MenuItem[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [search, setSearch] = useState('');
-  const [stockStatus, setStockStatus] = useState<Record<number, boolean>>({});
 
+  // Split loading states to avoid effects overwriting each other
+  const [salesLoading, setSalesLoading] = useState(true);
+  const [menuLoading, setMenuLoading] = useState(true);
+
+  const loading = salesLoading || menuLoading;
+
+  // Sales summary + low stock
   useEffect(() => {
     let mounted = true;
+
     (async () => {
       try {
-        const [w, items] = await Promise.all([
+        const [salesRes, lowItems] = await Promise.all([
           getSalesSummary(7),
-          getLowStockItems().catch(() => []),
+          getLowStockItems().catch(() => [] as LowStockItem[]),
         ]);
-        if (mounted) {
-          setWeek(w);
-          setLowStock(items);
-        }
+
+        if (!mounted) return;
+        setSummary(salesRes);
+        setLowStock(lowItems);
+      } catch (error) {
+        console.error('Failed to load sales/stock data:', error);
       } finally {
-        if (mounted) setLoading(false);
+        if (mounted) setSalesLoading(false);
       }
     })();
+
     return () => {
       mounted = false;
     };
   }, []);
 
-  const weekTotal = useMemo(
-    () => week.reduce((s, r) => s + Number(r.total || 0), 0),
-    [week]
+  // Menu categories + items
+  useEffect(() => {
+    let mounted = true;
+
+    (async () => {
+      setMenuLoading(true);
+      try {
+        const [cats, menuItems] = await Promise.all([
+          fetchCategories().catch(() => [] as Category[]),
+          fetchItems().catch(() => [] as MenuItem[]),
+        ]);
+
+        if (!mounted) return;
+        setCategories(cats);
+        setItems(menuItems);
+      } catch (error) {
+        console.error('Failed to load menu data:', error);
+      } finally {
+        if (mounted) setMenuLoading(false);
+      }
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  // Convert summary.by_day -> Row[] (fixes your original type mismatch root cause)
+  const week: Row[] = useMemo(
+    () =>
+      (summary?.by_day ?? []).map((d) => ({
+        date: d.day,
+        count: Number(d.qty ?? 0),
+        total: Number(d.revenue ?? 0),
+      })),
+    [summary]
   );
 
-  const weekCount = useMemo(
-    () => week.reduce((s, r) => s + (r.count || 0), 0),
-    [week]
-  );
+  // Prefer backend totals when available, fallback to week aggregate
+  const weekTotal = useMemo(() => {
+    if (summary?.total_revenue != null) return Number(summary.total_revenue || 0);
+    return week.reduce((sum, row) => sum + row.total, 0);
+  }, [summary, week]);
 
-  const avgOrder = useMemo(
-    () => (weekCount ? weekTotal / weekCount : 0),
-    [weekTotal, weekCount]
-  );
+  const weekCount = useMemo(() => {
+    if (summary?.total_qty != null) return Number(summary.total_qty || 0);
+    return week.reduce((sum, row) => sum + row.count, 0);
+  }, [summary, week]);
 
   const lowStockCount = lowStock.length;
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const cats = await fetchCategories();
-        setCategories(cats);
-      } catch (error) {
-        console.error('Failed categories:', error);
-      }
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const data = await fetchItems(
-          selectedCategory ?? undefined,
-          search.trim() || undefined
-        );
-        setItems(data);
-
-        const initialStock: Record<number, boolean> = {};
-        data.forEach((i) => {
-          initialStock[i.id] = i.is_available;
-        });
-        setStockStatus((prev) => ({ ...initialStock, ...prev }));
-      } catch (error) {
-        console.error('Failed items:', error);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [selectedCategory, search]);
-
-  // --- Metrics ---
   const metrics = useMemo(() => {
-    const total = items.length;
-    const avg =
-      total > 0
-        ? items.reduce((acc, curr) => acc + Number(curr.price), 0) / total
+    const totalItems = items.length;
+    const avgPrice =
+      totalItems > 0
+        ? items.reduce((acc, curr) => acc + Number(curr.price), 0) / totalItems
         : 0;
+
     return {
-      totalItems: total,
-      activeteMenuItems: items.filter((i) => i.is_available).length,
+      totalItems,
+      activeMenuItems: items.filter((i) => i.is_available).length,
       activeCategories: categories.length,
-      avgPrice: avg,
+      avgPrice,
     };
   }, [items, categories]);
 
@@ -127,7 +126,7 @@ export function DashboardKpiCards() {
         value={`LKR ${compactFormat(weekTotal)}`}
         subLabel='Last 7 days'
         Icon={Coins}
-        trend={{ value: 12.5, direction: 'up' }} // Mock trend
+        trend={{ value: 12.5, direction: 'up' }} // replace with real trend if you have it
         loading={loading}
       />
 
@@ -136,16 +135,15 @@ export function DashboardKpiCards() {
         value={compactFormat(weekCount)}
         subLabel='Last 7 days'
         Icon={ShoppingCart}
-        trend={{ value: 4.3, direction: 'up' }} // Mock trend
+        trend={{ value: 4.3, direction: 'up' }} // replace with real trend if you have it
         loading={loading}
       />
 
       <OverviewCard
         label='Total Menu Items'
-        value={metrics.activeCategories}
-        subLabel='Active dishes'
+        value={metrics.activeMenuItems}
+        subLabel={`${metrics.activeCategories} categories`}
         Icon={Utensils}
-        // trend={{ value: 2.1, direction: 'down' }} // Mock trend
         loading={loading}
       />
 
