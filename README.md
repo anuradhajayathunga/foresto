@@ -2,7 +2,9 @@
 
 A robust, scalable restaurant management platform powered by a **Django REST Framework** backend and a modern **Next.js** frontend. Supports workflows for **sales**, **purchasing**, **inventory**, **suppliers**, and **AI-powered demand forecasting**.
 
-This monorepo provides a seamless development, deployment, and collaboration experience for both the backend API (**foresto-be**) and the frontend web app (**foresto-fe**).
+The application securely communicates with the backend API for authentication, data fetching, and triggering AI-powered operations.
+
+[![Vercel Deploy](https://vercel.com/button)](https://foresto-5orcwo36g-anuradhajayathungas-projects.vercel.app)
 
 
 ## Table of Contents
