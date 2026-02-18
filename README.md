@@ -4,7 +4,7 @@ A robust, scalable restaurant management platform powered by a **Django REST Fra
 
 The application securely communicates with the backend API for authentication, data fetching, and triggering AI-powered operations.
 
-[![Vercel Deploy](https://vercel.com/button)](https://foresto-5orcwo36g-anuradhajayathungas-projects.vercel.app)
+[![Vercel Deploy](https://vercel.com/button)](https://foresto-two.vercel.app/login)
 
 
 ## Table of Contents
