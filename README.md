@@ -110,13 +110,22 @@ foresto/
 ## Clone the Repository
 ``` bash
 git clone https://github.com/anuradhajayathunga/foresto.git
-cd foresto
+cd web
 ```
 ## Environment Variables
-- Copy and configure the provided `.env.example` files in both the backend and frontend folders.
-- Never commit your real secrets!
+   - Copy and configure the provided `.env.example` files in both the backend and frontend folders.
 
-## Backend (backend/.env)
+## Backend Setup (Django)
+
+``` bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate       # (Windows: .venv\Scripts\activate)
+pip install -r requirements.txt
+cp .env.example .env
+```
+
+### Backend (web/backend/.env)
 ``` env
 DJANGO_SECRET_KEY=your-secret
 DJANGO_DEBUG=True
@@ -133,20 +142,8 @@ REDIS_URL=redis://localhost:6379/0
 CELERY_BROKER_URL=redis://localhost:6379/0
 CELERY_RESULT_BACKEND=redis://localhost:6379/0
 ```
-## Frontend (frontend/.env.local)
-``` env
-NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
-```
 
-## Backend Setup (Django)
 
-``` bash
-cd backend
-python -m venv env
-source env/bin/activate       # (Windows: env\Scripts\activate)
-pip install -r requirements.txt
-cp .env.example .env
-```
 
 ### Database setup (psql shell):
 
@@ -155,6 +152,7 @@ CREATE DATABASE foresto_db;
 CREATE USER foresto_user WITH PASSWORD 'foresto_password';
 GRANT ALL PRIVILEGES ON DATABASE foresto_db TO foresto_user;
 ```
+
 
 ### Run migrations & start server:
 
@@ -168,6 +166,7 @@ python manage.py runserver
 
 
 ## Frontend Setup (Next.js)
+
 ```bash
 cd frontend
 npm install       # or yarn install
@@ -176,6 +175,13 @@ npm run dev       # or yarn dev
 ```
 > Open [`http://localhost:3000`](http://localhost:3000) in your browser.
 
+
+### Frontend (web/frontend/.env.local)
+``` env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+```
+
+
 ### Running the Fullstack with Docker (Optional)
 If you have Docker installed, use the included docker-compose.yml for easy fullstack local dev:
 
@@ -183,8 +189,8 @@ If you have Docker installed, use the included docker-compose.yml for easy fulls
 docker-compose up --build
 ```
 
-- Frontend: [`http://localhost:3000`](http://localhost:3000) 
-- Backend: [`http://127.0.0.1:8000/`](http://127.0.0.1:8000/)
+   - Frontend: [`http://localhost:3000`](http://localhost:3000) 
+   - Backend: [`http://127.0.0.1:8000/`](http://127.0.0.1:8000/)
 
 
 ## Project Structure
